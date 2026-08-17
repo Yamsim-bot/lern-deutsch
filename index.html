@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LernDeutsch — Learn German</title>
+<style>
+  :root{
+    --ink:#1c1c1e; --muted:#6e6e73; --bg:#f7f6f2; --card:#ffffff;
+    --line:#e4e2da; --red:#e10600; --gold:#ffce00; --black:#1c1c1e;
+    --green:#1a7f37; --accent:#2b6cb0; --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.05);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg); color:var(--ink); line-height:1.55;}
+  .flag{height:4px; display:flex;}
+  .flag span{flex:1;} .flag span:nth-child(1){background:var(--black);}
+  .flag span:nth-child(2){background:var(--red);} .flag span:nth-child(3){background:var(--gold);}
+
+  header{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+         border-bottom:1px solid var(--line);}
+  .nav{max-width:980px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .brand{font-weight:800; font-size:19px; letter-spacing:-.3px; display:flex; align-items:center; gap:8px;}
+  .brand .de{color:var(--red);}
+  .nav-links{display:flex; gap:4px; margin-left:auto; flex-wrap:wrap;}
+  .nav-links button{background:none; border:none; padding:8px 12px; border-radius:10px; cursor:pointer;
+                    font-size:14px; font-weight:600; color:var(--muted);}
+  .nav-links button.active{background:var(--ink); color:#fff;}
+  .nav-links button:not(.active):hover{background:#eee; color:var(--ink);}
+  .level-pills{max-width:980px; margin:0 auto; padding:8px 16px 10px; display:flex; gap:8px; flex-wrap:wrap;}
+  .level-pills button{padding:7px 16px; border-radius:999px; border:1.5px solid var(--line); background:#fff;
+                      cursor:pointer; font-weight:700; font-size:13.5px; color:var(--muted);}
+  .level-pills button.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .level-pills button small{font-weight:600; opacity:.7; margin-left:3px;}
+
+  main{max-width:980px; margin:0 auto; padding:20px 16px 80px;}
+  .hero{background:linear-gradient(135deg,#1c1c1e 0%,#333 100%); color:#fff; border-radius:18px;
+        padding:28px 26px; margin-bottom:22px;}
+  .hero h1{font-size:26px; letter-spacing:-.4px; margin-bottom:6px;}
+  .hero p{color:#cfcfcf; max-width:640px; font-size:15px;}
+  .hero .badges{margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;}
+  .hero .badges span{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
+                     padding:4px 12px; border-radius:999px; font-size:12.5px; font-weight:600;}
+
+  h2.section{font-size:20px; margin:26px 0 12px; letter-spacing:-.3px;}
+  .grid{display:grid; gap:14px;}
+  .grid.cards{grid-template-columns:repeat(auto-fill,minmax(270px,1fr));}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px;
+        box-shadow:var(--shadow); cursor:pointer; transition:transform .12s ease, box-shadow .12s ease;}
+  .card:hover{transform:translateY(-2px); box-shadow:0 2px 6px rgba(0,0,0,.1),0 10px 24px rgba(0,0,0,.08);}
+  .card .lvl-tag{display:inline-block; font-size:11.5px; font-weight:800; letter-spacing:.4px;
+                 padding:3px 10px; border-radius:999px; margin-bottom:10px;}
+  .card h3{font-size:17px; margin-bottom:4px;}
+  .card p{color:var(--muted); font-size:13.5px;}
+  .card .meta{margin-top:12px; font-size:12.5px; color:var(--muted); display:flex; gap:14px; flex-wrap:wrap;}
+  .card .meta b{color:var(--ink);}
+  .done-mark{color:var(--green); font-weight:800;}
+
+  .lesson-item{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+               display:flex; align-items:center; gap:12px; margin-bottom:10px; cursor:pointer; box-shadow:var(--shadow);}
+  .lesson-item:hover{border-color:#ccc;}
+  .lesson-item .num{width:30px; height:30px; border-radius:8px; background:var(--ink); color:#fff;
+                    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex:none;}
+  .lesson-item.done .num{background:var(--green);}
+  .lesson-item .t{flex:1;}
+  .lesson-item .t b{font-size:14.5px;}
+  .lesson-item .t small{display:block; color:var(--muted); font-size:12.5px;}
+
+  .lesson-page{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 22px 26px;
+               box-shadow:var(--shadow);}
+  .lesson-page .crumbs{font-size:12.5px; color:var(--muted); margin-bottom:10px;}
+  .lesson-page h2{font-size:22px; margin-bottom:4px; letter-spacing:-.3px;}
+  .lesson-page .sub{color:var(--muted); font-size:14px; margin-bottom:18px;}
+  .lesson-page section{margin-bottom:22px;}
+  .lesson-page h3{font-size:15.5px; margin-bottom:8px;}
+  .lesson-page p{margin-bottom:10px; font-size:14.5px;}
+  .example{background:#fbfaf6; border:1px solid var(--line); border-left:3px solid var(--gold);
+           border-radius:8px; padding:10px 14px; margin:8px 0; font-size:14px;}
+  .example .de{font-weight:700;}
+  .example .en{color:var(--muted); font-size:13px;}
+  .example .speak{cursor:pointer; border:none; background:none; font-size:13px; margin-left:6px;}
+  .tip{background:#eef4fb; border:1px solid #cfe0f2; border-radius:8px; padding:10px 14px; font-size:13.5px; margin:8px 0;}
+  .tip b{color:var(--accent);}
+  table{width:100%; border-collapse:collapse; font-size:13.5px; margin:8px 0;}
+  th,td{border:1px solid var(--line); padding:6px 10px; text-align:left;}
+  th{background:#faf9f4;}
+  .btn{display:inline-block; border:none; border-radius:10px; padding:10px 18px; font-size:14px;
+       font-weight:700; cursor:pointer; background:var(--ink); color:#fff;}
+  .btn.green{background:var(--green);}
+  .btn.ghost{background:#fff; color:var(--ink); border:1.5px solid var(--line);}
+  .btn:disabled{opacity:.5; cursor:default;}
+  .btn-row{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
+
+  .flash-wrap{max-width:560px; margin:0 auto;}
+  .flash-card{background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow);
+              min-height:240px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+              padding:26px; cursor:pointer; text-align:center; user-select:none;}
+  .flash-card .de{font-size:34px; font-weight:800; letter-spacing:-.5px;}
+  .flash-card .art{font-size:16px; color:var(--muted); font-weight:600;}
+  .flash-card .en{font-size:22px; font-weight:600; margin-top:8px;}
+  .flash-card .ex{font-size:13.5px; color:var(--muted); margin-top:12px; font-style:italic;}
+  .flash-card .hint{font-size:12px; color:#aaa; margin-top:18px;}
+  .flash-controls{display:flex; justify-content:center; gap:10px; margin-top:16px; flex-wrap:wrap;}
+  .progress-track{height:8px; background:#eee; border-radius:99px; margin-top:16px; overflow:hidden;}
+  .progress-track i{display:block; height:100%; background:var(--green); border-radius:99px; transition:width .2s;}
+  .flash-count{text-align:center; color:var(--muted); font-size:13px; margin-top:8px;}
+
+  .quiz-box{max-width:620px; margin:0 auto;}
+  .q-card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px;
+          box-shadow:var(--shadow);}
+  .q-card .q{font-size:16.5px; font-weight:700; margin-bottom:14px;}
+  .opts{display:grid; gap:8px;}
+  .opt{border:1.5px solid var(--line); background:#fff; border-radius:10px; padding:11px 14px;
+       font-size:14.5px; cursor:pointer; text-align:left; transition:background .1s;}
+  .opt:hover:not(:disabled){background:#faf9f4;}
+  .opt.correct{background:#e6f4ea; border-color:var(--green); color:var(--green); font-weight:700;}
+  .opt.wrong{background:#fdecec; border-color:var(--red); color:var(--red);}
+  .opt:disabled{cursor:default; opacity:.85;}
+  .why{margin-top:12px; font-size:13.5px; background:#fbfaf6; border-radius:8px; padding:10px 14px;
+       border:1px solid var(--line); display:none;}
+  .why.show{display:block;}
+  .score-end{text-align:center; padding:26px;}
+  .score-end .big{font-size:44px; font-weight:800;}
+  .score-end .msg{color:var(--muted); margin:8px 0 16px;}
+
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px;}
+  .stat{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; box-shadow:var(--shadow);}
+  .stat .v{font-size:26px; font-weight:800;}
+  .stat .l{color:var(--muted); font-size:13px;}
+  .bar{height:8px; background:#eee; border-radius:99px; overflow:hidden; margin-top:8px;}
+  .bar i{display:block; height:100%; background:var(--accent); border-radius:99px;}
+
+  footer{max-width:980px; margin:0 auto; padding:0 16px 40px; color:var(--muted); font-size:12.5px;}
+  .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff;
+         padding:10px 18px; border-radius:10px; font-size:13.5px; box-shadow:0 6px 20px rgba(0,0,0,.25);
+         opacity:0; pointer-events:none; transition:opacity .25s; z-index:50;}
+  .toast.show{opacity:1;}
+  @media(max-width:560px){ .hero h1{font-size:21px;} .flash-card .de{font-size:26px;} }
+</style>
+</head>
+<body>
+<div class="flag"><span></span><span></span><span></span></div>
+<header>
+  <div class="nav">
+    <div class="brand"><span>🇩🇪</span><span>Lern<span class="de">Deutsch</span></span></div>
+    <div class="nav-links">
+      <button data-view="home">Home</button>
+      <button data-view="lessons">Lessons</button>
+      <button data-view="flash">Flashcards</button>
+      <button data-view="quiz">Quiz</button>
+      <button data-view="progress">Progress</button>
+    </div>
+  </div>
+  <div class="level-pills" id="levelPills"></div>
+</header>
+<main id="app"></main>
+<footer>LernDeutsch · Learn German from Basic to Advanced · Works fully offline · Progress saved in your browser</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ============================== DATA ============================== */
+const LEVELS = {
+basic:{name:"Basic", range:"A1–A2", blurb:"Start from zero: alphabet, greetings, articles, verbs and everyday words.",
+  accent:"#e10600",
+  lessons:[
+   {id:"b1", title:"Alphabet & Sounds", sub:"Pronunciation is the foundation",
+    html:`
+      <p>German has the same 26 letters as English plus three umlauts <b>ä ö ü</b> and the <b>ß</b> (sharp s). The golden rule: <b>German is written as it sounds</b> — learn a few letter pairs and you can read anything.</p>
+      <section><h3>Vowel pairs (always say them as ONE sound)</h3>
+      <table><tr><th>Letters</th><th>Sound</th><th>Examples</th></tr>
+      <tr><td>ei</td><td>"eye"</td><td>mein, nein, zwei, drei</td></tr>
+      <tr><td>ie</td><td>"ee" (long)</td><td>Liebe, Sie, vier, Bier</td></tr>
+      <tr><td>eu / äu</td><td>"oy"</td><td>deutsch, heute, Häuser, Fräulein</td></tr>
+      <tr><td>au</td><td>"ow"</td><td>Haus, Frau, blau, laut</td></tr>
+      <tr><td>ä, ö, ü</td><td>eh, "er", "ue"</td><td>Männer, schön, über</td></tr></table></section>
+      <section><h3>Consonant combos</h3>
+      <table><tr><th>Letters</th><th>Sound</th><th>Examples</th></tr>
+      <tr><td>sch</td><td>"sh"</td><td>Schule, Tisch, schreiben</td></tr>
+      <tr><td>ch (after a,o,u)</td><td>hard "kh"</td><td>Bach, Buch, Nacht</td></tr>
+      <tr><td>ch (after e,i,ä,ö,ü)</td><td>soft "shh"</td><td>ich, Milch, sprechen</td></tr>
+      <tr><td>z</td><td>"ts"</td><td>Zeit, Zimmer, Katze</td></tr>
+      <tr><td>w</td><td>"v"</td><td>Wasser, wo, wie</td></tr>
+      <tr><td>v</td><td>"f" (native words)</td><td>Vater, von, viel</td></tr>
+      <tr><td>s before vowel</td><td>"z"</td><td>Sonne, sehen, sein</td></tr>
+      <tr><td>ß</td><td>sharp "s"</td><td>Straße, Fuß, heiß</td></tr></table></section>
+      <div class="tip"><b>Tip:</b> ß comes after long vowels and diphthongs (Straße, heiß); after short vowels use <b>ss</b> (Wasser, Klasse). Switzerland writes ß as ss.</div>
+      <div class="example"><span class="de">Ich heiße Anna. Wie heißt du?</span><button class="speak" data-de="Ich heiße Anna. Wie heißt du?">🔊</button><br><span class="en">My name is Anna. What's your name?</span></div>`},
+   {id:"b2", title:"Articles & Noun Gender", sub:"der, die, das — learn it with every noun",
+    html:`
+      <p>Every German noun has a gender. Don't ask why — just memorize the article together with the noun: <b>der Tisch, die Lampe, das Buch</b>.</p>
+      <section><h3>Helpful patterns</h3>
+      <table><tr><th>der (masculine)</th><th>die (feminine)</th><th>das (neuter)</th></tr>
+      <tr><td>male people: der Mann</td><td>female people: die Frau</td><td>diminutives: das Mädchen</td></tr>
+      <tr><td>days/months/seasons: der Montag</td><td>–ung: die Zeitung</td><td>–chen / –lein: das Häuschen</td></tr>
+      <tr><td>weather: der Regen</td><td>–heit / –keit: die Freiheit</td><td>–um / –ment: das Museum</td></tr>
+      <tr><td>–er / –ling: der Lehrer</td><td>–schaft / –tion / –ik: die Freundschaft</td><td>verbs as nouns: das Essen</td></tr>
+      <tr><td>–e endings are often feminine: die Lampe</td><td></td><td>most metals: das Gold</td></tr></table></section>
+      <section><h3>The articles</h3>
+      <table><tr><th></th><th>der-words</th><th>ein-words</th></tr>
+      <tr><td>masculine</td><td>der Mann</td><td>ein Mann</td></tr>
+      <tr><td>feminine</td><td>die Frau</td><td>eine Frau</td></tr>
+      <tr><td>neuter</td><td>das Kind</td><td>ein Kind</td></tr>
+      <tr><td>plural</td><td>die Männer</td><td>– (keine Männer)</td></tr></table></section>
+      <div class="tip"><b>Tip:</b> always learn "der / die / das" with the noun. Flashcards in this app include the article for exactly this reason.</div>
+      <div class="example"><span class="de">Der Mann hat einen Hund. Die Frau hat eine Katze.</span><button class="speak" data-de="Der Mann hat einen Hund. Die Frau hat eine Katze.">🔊</button><br><span class="en">The man has a dog. The woman has a cat.</span></div>`},
+   {id:"b3", title:"Pronouns, sein & haben", sub:"The two most important verbs",
+    html:`
+      <p><b>sein</b> (to be) and <b>haben</b> (to have) appear in almost every sentence — learn them perfectly.</p>
+      <section><h3>sein</h3>
+      <table><tr><th></th><th>sein</th><th>haben</th></tr>
+      <tr><td>ich</td><td><b>bin</b></td><td><b>habe</b></td></tr>
+      <tr><td>du</td><td><b>bist</b></td><td><b>hast</b></td></tr>
+      <tr><td>er / sie / es</td><td><b>ist</b></td><td><b>hat</b></td></tr>
+      <tr><td>wir</td><td><b>sind</b></td><td><b>haben</b></td></tr>
+      <tr><td>ihr</td><td><b>seid</b></td><td><b>habt</b></td></tr>
+      <tr><td>sie / Sie</td><td><b>sind</b></td><td><b>haben</b></td></tr></table></section>
+      <section><h3>Pronouns</h3>
+      <p><b>ich</b> (I), <b>du</b> (you, informal), <b>er/sie/es</b> (he/she/it), <b>wir</b> (we), <b>ihr</b> (you guys), <b>sie</b> (they), <b>Sie</b> (you, formal — always capital S).</p></section>
+      <div class="tip"><b>Tip:</b> Use <b>du</b> with friends and family, <b>Sie</b> with strangers and in formal settings.</div>
+      <div class="example"><span class="de">Ich bin müde. Du bist hungrig. Wir sind Studenten.</span><button class="speak" data-de="Ich bin müde. Du bist hungrig. Wir sind Studenten.">🔊</button><br><span class="en">I am tired. You are hungry. We are students.</span></div>
+      <div class="example"><span class="de">Ich habe einen Termin. Er hat Hunger. Sie haben Recht.</span><button class="speak" data-de="Ich habe einen Termin. Er hat Hunger. Sie haben Recht.">🔊</button><br><span class="en">I have an appointment. He is hungry. You are right.</span></div>`},
+   {id:"b4", title:"Present Tense", sub:"Regular & irregular verbs",
+    html:`
+      <p>German present tense is used for what happens now AND for the future. Conjugate by removing <b>-en</b> and adding endings:</p>
+      <section><h3>Regular: machen</h3>
+      <table><tr><th></th><th>ending</th><th>machen</th></tr>
+      <tr><td>ich</td><td>-e</td><td>mache</td></tr>
+      <tr><td>du</td><td>-st</td><td>machst</td></tr>
+      <tr><td>er/sie/es</td><td>-t</td><td>macht</td></tr>
+      <tr><td>wir</td><td>-en</td><td>machen</td></tr>
+      <tr><td>ihr</td><td>-t</td><td>macht</td></tr>
+      <tr><td>sie/Sie</td><td>-en</td><td>machen</td></tr></table></section>
+      <section><h3>Irregular patterns</h3>
+      <table><tr><th>pattern</th><th>examples (du / er forms)</th></tr>
+      <tr><td>e → i(e)</td><td>sprechen → du sprichst, er spricht · lesen → du liest · nehmen → du nimmst</td></tr>
+      <tr><td>a → ä</td><td>fahren → du fährst, er fährt · schlafen → schläfst · waschen → wäschst</td></tr>
+      <tr><td>strong: essen</td><td>ich esse, du isst, er isst</td></tr></table></section>
+      <section><h3>Separable verbs</h3>
+      <p>Prefixes like <b>an-, auf-, mit-, fern-</b> go to the END of the sentence. The prefix is stressed.</p>
+      <div class="example"><span class="de">Ich rufe dich <b>an</b>. (anrufen)</span><button class="speak" data-de="Ich rufe dich an.">🔊</button><br><span class="en">I'll call you.</span></div>
+      <div class="example"><span class="de">Wir stehen um sieben <b>auf</b>. (aufstehen)</span><button class="speak" data-de="Wir stehen um sieben auf.">🔊</button><br><span class="en">We get up at seven.</span></div></section>`},
+   {id:"b5", title:"Word Order", sub:"Verb in position 2",
+    html:`
+      <p>In a main clause the <b>conjugated verb is always the second element</b> — even when something else goes first.</p>
+      <div class="example"><span class="de">Ich <b>lerne</b> Deutsch.</span><span class="en"> I learn German.</span></div>
+      <div class="example"><span class="de">Heute <b>lerne</b> ich Deutsch.</span><span class="en"> Today I learn German.</span></div>
+      <div class="example"><span class="de">Deutsch <b>lerne</b> ich. </span><span class="en">(emphasis) German I learn.</span></div>
+      <section><h3>Questions</h3>
+      <p>Yes/no questions start with the verb: <b>Lernst</b> du Deutsch? W-questions start with the question word: <b>Wo</b> wohnst du?</p></section>
+      <section><h3>Time – Manner – Place</h3>
+      <p>The natural order of details is: <b>when → how → where</b>.</p>
+      <div class="example"><span class="de">Ich fahre <b>morgen mit dem Bus nach Berlin</b>.</span><button class="speak" data-de="Ich fahre morgen mit dem Bus nach Berlin.">🔊</button><br><span class="en">I'm going to Berlin by bus tomorrow.</span></div></section>
+      <section><h3>Where "nicht" goes</h3>
+      <p><b>nicht</b> comes after the verb/object and before the word it negates: Ich spreche <b>nicht</b> Spanisch. Ich bin <b>nicht</b> müde.</p></section>`},
+   {id:"b6", title:"Numbers, Time, Days", sub:"Essential everyday vocabulary",
+    html:`
+      <section><h3>Numbers</h3>
+      <p>0 null · 1 eins · 2 zwei · 3 drei · 4 vier · 5 fünf · 6 sechs · 7 sieben · 8 acht · 9 neun · 10 zehn · 11 elf · 12 zwölf</p>
+      <p>13–19: <b>-zehn</b> (dreizehn, vierzehn…). 20+ units come FIRST: 21 <b>einundzwanzig</b>, 34 <b>vierunddreißig</b>.</p>
+      <p>100 hundert · 1000 tausend.</p></section>
+      <section><h3>Days & months</h3>
+      <p>Montag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag (Sonnabend), Sonntag · Januar, Februar, März, April, Mai, Juni, Juli, August, September, Oktober, November, Dezember.</p></section>
+      <section><h3>Telling time</h3>
+      <table><tr><th>German</th><th>Clock</th><th>Meaning</th></tr>
+      <tr><td>Es ist drei Uhr.</td><td>3:00</td><td>It's three o'clock.</td></tr>
+      <tr><td>Es ist halb fünf.</td><td>4:30</td><td>It's half TO five.</td></tr>
+      <tr><td>Es ist Viertel nach drei.</td><td>3:15</td><td>Quarter past three.</td></tr>
+      <tr><td>Es ist Viertel vor vier.</td><td>3:45</td><td>Quarter to four.</td></tr></table></section>
+      <div class="tip"><b>Warning:</b> "halb fünf" means <b>4:30</b>, not 5:30! German counts half TO the next hour.</div>
+      <div class="example"><span class="de">Es ist Viertel nach acht. Der Zug fährt um halb neun.</span><button class="speak" data-de="Es ist Viertel nach acht. Der Zug fährt um halb neun.">🔊</button><br><span class="en">It's 8:15. The train leaves at 8:30.</span></div>`},
+   {id:"b7", title:"Nominative & Accusative", sub:"Who does what to whom",
+    html:`
+      <p>German has four cases. The <b>nominative</b> is the subject (the doer); the <b>accusative</b> is the direct object (the receiver).</p>
+      <section><h3>Changes you must know</h3>
+      <table><tr><th></th><th>nominative</th><th>accusative</th></tr>
+      <tr><td>der →</td><td>der Mann</td><td><b>den</b> Mann</td></tr>
+      <tr><td>die →</td><td>die Frau</td><td>die Frau (no change)</td></tr>
+      <tr><td>das →</td><td>das Kind</td><td>das Kind (no change)</td></tr>
+      <tr><td>ein →</td><td>ein Mann</td><td><b>einen</b> Mann</td></tr>
+      <tr><td>eine →</td><td>eine Frau</td><td>eine Frau (no change)</td></tr>
+      <tr><td>kein →</td><td>kein Mann</td><td><b>keinen</b> Mann</td></tr></table></section>
+      <section><h3>Using it</h3>
+      <div class="example"><span class="de">Ich sehe <b>den</b> Mann.</span><span class="en"> I see the man.</span></div>
+      <div class="example"><span class="de">Er liest <b>das</b> Buch. Sie trinkt <b>eine</b> Cola. Ich habe <b>keinen</b> Bruder.</span><button class="speak" data-de="Ich habe keinen Bruder.">🔊</button><br><span class="en">He reads the book. She drinks a cola. I have no brother.</span></div></section>
+      <div class="tip"><b>Remember:</b> only the masculine changes visibly (der→den, ein→einen, kein→keinen). Feminine and neuter stay the same.</div>`},
+   {id:"b8", title:"Dative & Key Phrases", sub:"to whom? with whom?",
+    html:`
+      <p>The <b>dative</b> marks the indirect object ("to/for whom") and follows fixed prepositions.</p>
+      <section><h3>Article changes</h3>
+      <table><tr><th></th><th>nominative</th><th>dative</th></tr>
+      <tr><td>der</td><td>der Mann</td><td><b>dem</b> Mann</td></tr>
+      <tr><td>die</td><td>die Frau</td><td><b>der</b> Frau</td></tr>
+      <tr><td>das</td><td>das Kind</td><td><b>dem</b> Kind</td></tr>
+      <tr><td>ein</td><td>ein Mann</td><td><b>einem</b> Mann</td></tr>
+      <tr><td>eine</td><td>eine Frau</td><td><b>einer</b> Frau</td></tr></table></section>
+      <section><h3>Dative pronouns</h3>
+      <p>mir (to me), dir (to you), ihm/ihr/ihm, uns, euch, ihnen/Ihnen</p>
+      <div class="example"><span class="de">Er hilft <b>mir</b>. Ich danke <b>dir</b>.</span><span class="en"> He helps me. I thank you.</span></div></section>
+      <section><h3>Prepositions that always take dative</h3>
+      <p><b>aus, bei, mit, nach, seit, von, zu</b> — always + dative.</p>
+      <div class="example"><span class="de">Ich gehe <b>mit dem</b> Freund. Wir fahren <b>zu der</b> Oma.</span><button class="speak" data-de="Ich gehe mit dem Freund.">🔊</button><br><span class="en">I go with the friend. We drive to grandma's.</span></div></section>
+      <section><h3>Survival phrases</h3>
+      <div class="example"><span class="de">Guten Morgen! · Wie geht es dir? · Mir geht es gut. · Entschuldigung! · Vielen Dank! · Auf Wiedersehen!</span><button class="speak" data-de="Guten Morgen! Wie geht es dir? Mir geht es gut.">🔊</button></div></section>`}
+  ],
+  vocab:[["der Mann","man"],["die Frau","woman"],["das Kind","child"],["das Haus","house"],["das Auto","car"],
+    ["das Wasser","water"],["das Brot","bread"],["die Milch","milk"],["der Kaffee","coffee"],["der Tee","tea"],
+    ["der Tag","day"],["die Nacht","night"],["der Morgen","morning"],["der Abend","evening"],["heute","today"],
+    ["morgen","tomorrow"],["gestern","yesterday"],["die Arbeit","work"],["die Schule","school"],["die Familie","family"],
+    ["die Mutter","mother"],["der Vater","father"],["der Bruder","brother"],["die Schwester","sister"],
+    ["der Freund","friend (m)"],["die Freundin","friend (f)"],["essen","to eat"],["trinken","to drink"],
+    ["gehen","to go"],["kommen","to come"],["sprechen","to speak"],["sehen","to see"],["hören","to hear"],
+    ["machen","to make / do"],["kaufen","to buy"],["das Geld","money"],["groß","big / tall"],["klein","small"],
+    ["gut","good"],["schlecht","bad"]],
+  quiz:[
+    {q:"What does “danke” mean?", opts:["please","thank you","sorry","goodbye"], a:1, why:"Danke = thank you. “Bitte” can mean please or you're welcome."},
+    {q:"Which article belongs to “Frau”?", opts:["der","die","das","den"], a:1, why:"die Frau — female people are feminine."},
+    {q:"ich + sein = ?", opts:["ich bist","ich ist","ich bin","ich sind"], a:2, why:"ich bin — one of the first forms you must memorize."},
+    {q:"“wir” means…", opts:["you","they","we","she"], a:2, why:"wir = we. Sie (capital S) = formal you; sie = they."},
+    {q:"er + haben = ?", opts:["er habt","er hat","er hast","er haben"], a:1, why:"er/sie/es hat."},
+    {q:"Complete: “Ich ___ Deutsch.” (to learn)", opts:["lerne","lernst","lernt","lernen"], a:0, why:"ich lerne — ending -e for ich."},
+    {q:"“morgen” means…", opts:["yesterday","today","tomorrow","evening"], a:2, why:"morgen = tomorrow; gestern = yesterday; heute = today."},
+    {q:"“halb fünf” = ?", opts:["5:30","4:30","5:15","4:45"], a:1, why:"German counts half TO the next hour: halb fünf = 4:30."},
+    {q:"Ich gehe ___ dem Freund. (with)", opts:["zu","mit","von","bei"], a:1, why:"mit + dative = with. dem is dative of der."},
+    {q:"Accusative of “der Mann” is…", opts:["der Mann","die Mann","den Mann","dem Mann"], a:2, why:"Only masculine changes in accusative: der → den."},
+    {q:"“Es tut mir leid” means…", opts:["I'm sorry","See you later","Good luck","No problem"], a:0, why:"A core apology phrase: It does me sorrow = I'm sorry."},
+    {q:"Which is correct?", opts:["Ich bin ein Student","Ich habe ein Student","Ich bin Student","Ich bin eine Student"], a:2, why:"Nationalities/professions drop the article: Ich bin Student."}]
+},
+intermediate:{name:"Intermediate", range:"B1–B2", blurb:"Past tenses, modal verbs, prepositions, passive voice and real conversation.",
+  accent:"#2b6cb0",
+  lessons:[
+   {id:"i1", title:"Perfekt & Präteritum", sub:"The two past tenses",
+    html:`
+      <p>Spoken German lives in the <b>Perfekt</b> (have/has + participle). Written stories use <b>Präteritum</b>.</p>
+      <section><h3>Perfekt = haben/sein + Partizip II</h3>
+      <table><tr><th>type</th><th>formation</th><th>example</th></tr>
+      <tr><td>regular</td><td>ge- + stem + -t</td><td>machen → <b>gemacht</b>, kaufen → <b>gekauft</b></td></tr>
+      <tr><td>irregular</td><td>ge- + stem + -en</td><td>gehen → <b>gegangen</b>, sehen → <b>gesehen</b></td></tr>
+      <tr><td>separable</td><td>prefix + ge- …</td><td>anrufen → <b>angerufen</b>, aufstehen → <b>aufgestanden</b></td></tr></table></section>
+      <section><h3>haben or sein?</h3>
+      <p>Use <b>sein</b> for movement (gehen, fahren, kommen) and change of state (aufstehen, werden, sterben). Everything else takes <b>haben</b>.</p>
+      <div class="example"><span class="de">Ich <b>habe</b> gestern gearbeitet. Er <b>ist</b> nach Berlin <b>gefahren</b>. Wir <b>sind</b> früh <b>aufgestanden</b>.</span><button class="speak" data-de="Ich habe gestern gearbeitet. Er ist nach Berlin gefahren.">🔊</button><br><span class="en">I worked yesterday. He drove to Berlin. We got up early.</span></div></section>
+      <section><h3>Präteritum</h3>
+      <p>Learn these by heart: <b>war</b> (was), <b>hatte</b> (had), <b>ging, kam, sah, fuhr, machte, sagte</b>. In speech, sein/haben/modal verbs are used in Präteritum even when everything else is Perfekt.</p>
+      <div class="example"><span class="de">Es <b>war</b> ein schöner Tag. Ich <b>hatte</b> keine Zeit.</span><button class="speak" data-de="Es war ein schöner Tag. Ich hatte keine Zeit.">🔊</button><br><span class="en">It was a nice day. I had no time.</span></div></section>`},
+   {id:"i2", title:"Modal Verbs", sub:"can, must, may, should, want",
+    html:`
+      <table><tr><th>verb</th><th>meaning</th><th>ich / du / er</th></tr>
+      <tr><td>können</td><td>can, be able</td><td>kann / kannst / kann</td></tr>
+      <tr><td>müssen</td><td>must, have to</td><td>muss / musst / muss</td></tr>
+      <tr><td>dürfen</td><td>may, be allowed</td><td>darf / darfst / darf</td></tr>
+      <tr><td>sollen</td><td>should, supposed to</td><td>soll / sollst / soll</td></tr>
+      <tr><td>wollen</td><td>want to</td><td>will / willst / will</td></tr>
+      <tr><td>möchten</td><td>would like</td><td>möchte / möchtest / möchte</td></tr></table>
+      <section><h3>The modal pushes the main verb to the end</h3>
+      <div class="example"><span class="de">Ich <b>kann</b> gut schwimmen. Wir <b>müssen</b> jetzt gehen.</span><button class="speak" data-de="Ich kann gut schwimmen.">🔊</button><br><span class="en">I can swim well. We have to go now.</span></div></section>
+      <section><h3>Careful with müssen & dürfen negatives</h3>
+      <table><tr><th>phrase</th><th>meaning</th></tr>
+      <tr><td>nicht müssen</td><td>don't have to (optional!)</td></tr>
+      <tr><td>nicht dürfen</td><td>must not (forbidden)</td></tr></table>
+      <div class="example"><span class="de">Du <b>musst</b> nicht kommen. (optional) · Du <b>darfst</b> hier nicht rauchen. (forbidden)</span><button class="speak" data-de="Hier darf man nicht rauchen.">🔊</button></div>
+      <div class="tip"><b>Tip:</b> möchten comes from mögen but is its own word — use it for polite wants: Ich möchte einen Kaffee.</div>`},
+   {id:"i3", title:"Two-Way Prepositions", sub:"in, an, auf — motion vs location",
+    html:`
+      <p>Prepositions like <b>in, an, auf, über, unter, vor, hinter, neben, zwischen</b> take <b>accusative</b> (motion, Wohin?) or <b>dative</b> (location, Wo?).</p>
+      <table><tr><th>question</th><th>case</th><th>example</th></tr>
+      <tr><td>Wohin? (where to)</td><td>Accusative</td><td>Ich lege das Buch <b>auf den</b> Tisch.</td></tr>
+      <tr><td>Wo? (where)</td><td>Dative</td><td>Das Buch liegt <b>auf dem</b> Tisch.</td></tr></table>
+      <section><h3>Contractions you'll see everywhere</h3>
+      <p>an dem → <b>am</b> · in dem → <b>im</b> · zu dem → <b>zum</b> · bei dem → <b>beim</b> · von dem → <b>vom</b> · zu der → <b>zur</b></p></section>
+      <div class="example"><span class="de">Ich gehe <b>in die</b> Stadt. (motion) · Ich bin <b>in der</b> Stadt. (location)</span><button class="speak" data-de="Ich gehe in die Stadt.">🔊</button><br><span class="en">I'm going into town. / I'm in town.</span></div>
+      <div class="tip"><b>Memory aid:</b> motion = movement across the line → accusative; location = standing still → dative.</div>`},
+   {id:"i4", title:"Relative Clauses", sub:"who, which, that",
+    html:`
+      <p>The relative pronoun matches its noun in <b>gender & number</b>, and takes the <b>case from its own clause</b>.</p>
+      <table><tr><th></th><th>nominative</th><th>accusative</th><th>dative</th></tr>
+      <tr><td>der</td><td>der</td><td>den</td><td>dem</td></tr>
+      <tr><td>die</td><td>die</td><td>die</td><td>der</td></tr>
+      <tr><td>das</td><td>das</td><td>das</td><td>dem</td></tr>
+      <tr><td>plural</td><td>die</td><td>die</td><td>denen</td></tr></table>
+      <div class="example"><span class="de">Der Mann, <b>der</b> dort steht, ist mein Lehrer.</span><button class="speak" data-de="Der Mann, der dort steht, ist mein Lehrer.">🔊</button><br><span class="en">The man standing there is my teacher.</span></div>
+      <div class="example"><span class="de">Die Frau, <b>die</b> ich sehe, ist nett. · Das Buch, <b>das</b> auf dem Tisch liegt, ist neu.</span><span class="en"> The woman I see is nice. / The book on the table is new.</span></div>
+      <section><h3>Special relatives</h3>
+      <p><b>wo</b> = where (for places): die Stadt, <b>wo</b> ich wohne · <b>was</b> = what (after alles, nichts, das): Alles, <b>was</b> er sagt, ist wahr.</p></section>
+      <div class="tip"><b>Note:</b> the relative clause pushes the verb to the end: der Mann, der dort <b>steht</b>.</div>`},
+   {id:"i5", title:"Passive Voice", sub:"werden + Partizip II",
+    html:`
+      <p>Use the passive when the action matters more than the doer: <b>werden + Partizip II</b>.</p>
+      <div class="example"><span class="de">Das Haus <b>wird gebaut</b>. Das Haus <b>wurde gebaut</b>. Das Haus <b>ist gebaut worden</b>.</span><button class="speak" data-de="Das Haus wird gebaut.">🔊</button><br><span class="en">The house is being built / was built / has been built.</span></div>
+      <section><h3>Naming the doer</h3>
+      <table><tr><th>agent</th><th>preposition</th><th>example</th></tr>
+      <tr><td>people</td><td>von + dative</td><td>von dem Architekten</td></tr>
+      <tr><td>means</td><td>durch + accusative</td><td>durch den Wind</td></tr>
+      <tr><td>instrument</td><td>mit + dative</td><td>mit dem Hammer</td></tr></table></section>
+      <section><h3>The everyday alternative: man</h3>
+      <p>Instead of passive, Germans often use <b>man</b> + active: <b>man baut</b> das Haus (one builds the house = the house is being built).</p></section>
+      <div class="tip"><b>Only transitive verbs</b> (with an object) can form the passive: "schlafen" has no object → no passive.</div>`},
+   {id:"i6", title:"Konjunktiv II", sub:"would, could, unreal situations",
+    html:`
+      <p>Konjunktiv II expresses <b>wishes, unreal conditions and politeness</b>.</p>
+      <section><h3>würde + infinitive (the easy way)</h3>
+      <div class="example"><span class="de">Ich <b>würde</b> gern nach Berlin <b>fahren</b>. </span><span class="en">I would like to drive to Berlin.</span></div></section>
+      <section><h3>The important irregular forms</h3>
+      <table><tr><th>verb</th><th>Konjunktiv II</th><th>meaning</th></tr>
+      <tr><td>haben</td><td>ich <b>hätte</b></td><td>I would have</td></tr>
+      <tr><td>sein</td><td>ich <b>wäre</b></td><td>I would be</td></tr>
+      <tr><td>können</td><td>ich <b>könnte</b></td><td>I could</td></tr>
+      <tr><td>wollen</td><td>ich <b>wollte</b></td><td>I would want</td></tr></table>
+      <div class="example"><span class="de">Ich <b>hätte</b> gern einen Kaffee. <b>Könnten</b> Sie mir helfen? Wenn ich Zeit <b>hätte</b>, <b>würde</b> ich kommen.</span><button class="speak" data-de="Könnten Sie mir helfen?">🔊</button><br><span class="en">I would like a coffee. Could you help me? If I had time, I would come.</span></div></section>
+      <section><h3>Unreal conditions</h3>
+      <p><b>Wenn</b> + Präteritum/Konjunktiv, main clause with würde: Wenn es <b>regnete</b>, blieben wir zu Hause. (If it rained, we'd stay home.)</p></section>
+      <div class="tip"><b>Politeness secret:</b> "Könnten Sie…?", "Würden Sie…?" sound much more polite than the direct imperative.</div>`},
+   {id:"i7", title:"Adjective Endings", sub:"der gute Mann, ein guter Mann",
+    html:`
+      <p>Adjective endings depend on the word BEFORE the adjective: a <b>der-word</b>, an <b>ein-word</b>, or <b>nothing</b>.</p>
+      <section><h3>After der-word (der, dieser, jeder, welcher)</h3>
+      <table><tr><th></th><th>masc</th><th>fem</th><th>neut</th><th>plural</th></tr>
+      <tr><td>nom</td><td>der gute Mann</td><td>die gute Frau</td><td>das gute Kind</td><td>die guten Kinder</td></tr>
+      <tr><td>acc</td><td>den guten Mann</td><td>die gute Frau</td><td>das gute Kind</td><td>die guten Kinder</td></tr>
+      <tr><td>dat</td><td>dem guten Mann</td><td>der guten Frau</td><td>dem guten Kind</td><td>den guten Kindern</td></tr></table></section>
+      <section><h3>After ein-word (ein, kein, mein, dein…)</h3>
+      <p>The ending shows the gender (since the article hides it): <b>ein guter</b> Mann, <b>eine gute</b> Frau, <b>ein gutes</b> Kind, <b>keine guten</b> Kinder.</p></section>
+      <section><h3>No article (strong endings)</h3>
+      <p><b>guter</b> Kaffee, <b>gute</b> Milch, <b>gutes</b> Brot — same endings as the der-word table minus the article.</p></section>
+      <div class="tip"><b>Shortcut:</b> after a der-word, the adjective ends in <b>-e</b> (or <b>-en</b> everywhere else). After ein-word, the adjective "borrows" the der-ending.</div>
+      <div class="example"><span class="de">Das ist ein <b>guter</b> Kaffee. Ich trinke <b>einen guten</b> Kaffee. Mit <b>einem guten</b> Kaffee.</span><button class="speak" data-de="Das ist ein guter Kaffee.">🔊</button><br><span class="en">That's a good coffee. / I drink a good coffee. / With a good coffee.</span></div>`},
+   {id:"i8", title:"Connectors & Word Building", sub:"weil, obwohl, deshalb — and how words grow",
+    html:`
+      <section><h3>Subordinating conjunctions (verb → end)</h3>
+      <table><tr><th>word</th><th>meaning</th><th>example</th></tr>
+      <tr><td>weil</td><td>because</td><td>Ich bleibe zu Hause, weil es <b>regnet</b>.</td></tr>
+      <tr><td>obwohl</td><td>although</td><td>Obwohl er müde ist, arbeitet er.</td></tr>
+      <tr><td>da</td><td>since (formal)</td><td>Da es regnet, bleiben wir.</td></tr>
+      <tr><td>damit</td><td>so that</td><td>Ich lerne, damit ich bestehe.</td></tr></table></section>
+      <section><h3>Coordinating conjunctions (normal order)</h3>
+      <p><b>aber, oder, und, denn</b> keep the verb in position 2. <b>deshalb, deswegen, trotzdem</b> = therefore/nevertheless, verb follows directly.</p>
+      <div class="example"><span class="de">Es regnet, <b>deshalb</b> bleiben wir zu Hause.</span><button class="speak" data-de="Es regnet, deshalb bleiben wir zu Hause.">🔊</button><br><span class="en">It's raining, so we stay home.</span></div></section>
+      <section><h3>Building words</h3>
+      <table><tr><th>suffix</th><th>makes</th><th>example</th></tr>
+      <tr><td>-keit, -heit, -ung, -schaft</td><td>nouns</td><td>möglich → die Möglichkeit · frei → die Freiheit</td></tr>
+      <tr><td>-lich, -ig, -bar, -los</td><td>adjectives</td><td>Freund → freundlich · Ende → endlos</td></tr>
+      <tr><td>prefix verbs</td><td>new meanings</td><td>kommen → ankommen, mitkommen, herauskommen</td></tr></table></section>
+      <div class="tip"><b>Power move:</b> learn prefix verbs in groups — the prefix changes the meaning systematically: aufstehen (get up), anfangen (begin), mitkommen (come along), fernsehen (watch TV).</div>`}
+  ],
+  vocab:[["die Reise","trip / journey"],["der Flughafen","airport"],["die Verspätung","delay"],["der Termin","appointment"],
+    ["die Verhandlung","negotiation"],["die Gesundheit","health"],["die Versicherung","insurance"],["die Umwelt","environment"],
+    ["die Wirtschaft","economy"],["die Politik","politics"],["die Erfahrung","experience"],["der Fortschritt","progress"],
+    ["die Zukunft","future"],["die Vergangenheit","past"],["der Vertrag","contract"],["der Kunde","customer"],
+    ["der Mitarbeiter","employee / colleague"],["der Arbeitgeber","employer"],["der Arbeitnehmer","employee (worker)"],
+    ["das Gehalt","salary"],["die Steuer","tax"],["die Rechnung","bill / invoice"],["bezahlen","to pay"],
+    ["überweisen","to transfer (money)"],["buchen","to book"],["stornieren","to cancel"],["entwickeln","to develop"],
+    ["verbessern","to improve"],["unterstützen","to support"],["entscheiden","to decide"],["vergessen","to forget"],
+    ["sich erinnern","to remember"],["erklären","to explain"],["verstehen","to understand"],["teilnehmen","to participate"],
+    ["stattfinden","to take place"],["ankündigen","to announce"],["vorbereiten","to prepare"],["anfangen","to begin"],
+    ["aufhören","to stop"],["nachhaltig","sustainable"],["allerdings","however"]],
+  quiz:[
+    {q:"Perfekt of “machen”?", opts:["gemachen","gemacht","machet","gemachtet"], a:1, why:"regular: ge- + mach + -t = gemacht."},
+    {q:"Ich ___ gestern gearbeitet.", opts:["bin","habe","hat","ist"], a:1, why:"arbeiten takes haben: Ich habe gearbeitet."},
+    {q:"Er ___ nach Berlin gefahren.", opts:["hat","ist","wird","habe"], a:1, why:"fahren = movement → sein: Er ist gefahren."},
+    {q:"“Hier darf man nicht rauchen” means…", opts:["smoking is optional","you must smoke here","smoking is forbidden","smoking is allowed"], a:2, why:"nicht dürfen = forbidden; nicht müssen would be optional."},
+    {q:"Wohin? — Ich lege das Buch ___ den Tisch.", opts:["auf","mit","bei","von"], a:0, why:"motion (Wohin?) → accusative → auf den Tisch."},
+    {q:"Das Haus ___ gebaut.", opts:["ist","wird","hat","werden"], a:1, why:"present passive: werden + Partizip II → wird gebaut."},
+    {q:"“Ich würde gern nach Berlin fahren” means…", opts:["I must go to Berlin","I drove to Berlin","I would like to go to Berlin","I went to Berlin"], a:2, why:"würde + infinitive = would like to."},
+    {q:"Die Frau, ___ neben mir sitzt, ist nett.", opts:["der","den","die","dem"], a:2, why:"die Frau is feminine; relative pronoun in nominative = die."},
+    {q:"“ein ___ Mann” (gut)", opts:["gute","guten","guter","gutes"], a:2, why:"after ein-word, masculine nominative takes -er: ein guter Mann."},
+    {q:"“Ich bleibe zu Hause, weil es regnet.” — the verb is at the end because…", opts:["weil is a coordinating conjunction","weil is a subordinating conjunction","the sentence is a question","regnet is separable"], a:1, why:"weil sends the verb to the end."},
+    {q:"“nicht müssen” means…", opts:["must not (forbidden)","don't have to (optional)","can't","won't"], a:1, why:"nicht müssen = not necessary; nicht dürfen = forbidden."},
+    {q:"Which is dative?", opts:["den Tisch","dem Tisch","der Tisch","einen Tisch"], a:1, why:"dem = dative masculine; den = accusative; der = nominative."}]
+},
+advanced:{name:"Advanced", range:"C1–C2", blurb:"Subjunctive, nominal style, idioms and the register of educated native speakers.",
+  accent:"#7c3aed",
+  lessons:[
+   {id:"a1", title:"Konjunktiv I — Reported Speech", sub:"er sagt, er habe keine Zeit",
+    html:`
+      <p>Use <b>Konjunktiv I</b> to report what someone said WITHOUT saying whether it's true. It's the standard in news and formal writing.</p>
+      <section><h3>The forms that matter</h3>
+      <table><tr><th>verb</th><th>reported form</th></tr>
+      <tr><td>haben</td><td>er <b>habe</b> (gehabt)</td></tr>
+      <tr><td>sein</td><td>er <b>sei</b> (gewesen)</td></tr>
+      <tr><td>werden</td><td>er <b>werde</b></td></tr>
+      <tr><td>regular verbs</td><td>er mache, er sage, er komme</td></tr></table></section>
+      <div class="example"><span class="de">Der Minister sagt, die Lage <b>sei</b> unter Kontrolle. Er <b>habe</b> alle Maßnahmen getroffen.</span><button class="speak" data-de="Der Minister sagt, die Lage sei unter Kontrolle.">🔊</button><br><span class="en">The minister says the situation is under control. He has taken all measures.</span></div>
+      <section><h3>When the form is ambiguous</h3>
+      <p>Often Konjunktiv I looks identical to the indicative (sie machen). Speakers then switch to Konjunktiv II (sie <b>machten</b> → or besser: man sagt, sie <b>hätten</b> gemacht).</p></section>
+      <div class="tip"><b>Reading news tip:</b> "laut …", "nach Angaben von …", "so der Sprecher" all introduce reported speech — expect Konjunktiv I.</div>`},
+   {id:"a2", title:"Nominalization & Funktionsverbgefüge", sub:"The style of formal German",
+    html:`
+      <p>Formal/academic German prefers <b>nouns over verbs</b>. Instead of "man entschied", a report says "die Entscheidung wurde getroffen".</p>
+      <section><h3>Common FVG (verb-noun combinations)</h3>
+      <table><tr><th>expression</th><th>meaning</th></tr>
+      <tr><td>in Betrieb nehmen</td><td>to commission / put into operation</td></tr>
+      <tr><td>zur Verfügung stellen</td><td>to make available</td></tr>
+      <tr><td>in Frage kommen</td><td>to be a possibility</td></tr>
+      <tr><td>zum Ausdruck bringen</td><td>to express</td></tr>
+      <tr><td>eine Rolle spielen</td><td>to play a role</td></tr>
+      <tr><td>in Kauf nehmen</td><td>to accept (a drawback)</td></tr>
+      <tr><td>in Betracht ziehen</td><td>to consider</td></tr>
+      <tr><td>einen Beitrag leisten</td><td>to contribute</td></tr></table></section>
+      <div class="example"><span class="de">Die neue Anlage wurde <b>in Betrieb genommen</b>. Die Firma <b>stellte</b> die Daten <b>zur Verfügung</b>.</span><button class="speak" data-de="Die neue Anlage wurde in Betrieb genommen.">🔊</button><br><span class="en">The new plant was commissioned. The company made the data available.</span></div>
+      <section><h3>Verb → noun conversion</h3>
+      <p>entscheiden → die <b>Entscheidung</b> · beantragen → der <b>Antrag</b> · voraussetzen → die <b>Voraussetzung</b> · ablehnen → die <b>Ablehnung</b></p></section>
+      <div class="tip"><b>Register sense:</b> in a cover letter or essay, prefer "Ich bin der Meinung, dass…" over "Ich meine, dass…" — both are correct, but the nominal version signals advanced style.</div>`},
+   {id:"a3", title:"Extended Participial Attributes", sub:"the reform proposed by the government",
+    html:`
+      <p>Written German packs information BEFORE the noun using a participle: <b>article + (long middle) + participle + noun</b>.</p>
+      <div class="example"><span class="de">die <b>von der Regierung vorgeschlagene</b> Reform</span><br><span class="en">the reform proposed by the government</span></div>
+      <div class="example"><span class="de">der <b>im Jahr 2023 eröffnete</b> Bahnhof · das <b>erst kürzlich veröffentlichte</b> Buch</span><br><span class="en">the station opened in 2023 · the recently published book</span></div>
+      <section><h3>Reading strategy</h3>
+      <ol style="margin-left:18px; font-size:14.5px;">
+        <li>Find the <b>article</b> (die / der / das)</li>
+        <li>Skip the middle — locate the <b>participle</b> (vorgeschlagene)</li>
+        <li>Land on the <b>noun</b> (Reform)</li>
+        <li>Unpack the middle as a relative clause</li>
+      </ol></section>
+      <div class="example"><span class="de">Die von der Regierung vorgeschlagene Reform wurde gestern verabschiedet.</span><button class="speak" data-de="Die von der Regierung vorgeschlagene Reform wurde gestern verabschiedet.">🔊</button><br><span class="en">The reform proposed by the government was passed yesterday.</span></div>
+      <div class="tip"><b>Note the endings:</b> the participle takes the same adjective ending the noun requires (die…e Reform, dem…en Bahnhof).</div>`},
+   {id:"a4", title:"Complex Sentences & Infinitive Clauses", sub:"um…zu, ohne…zu, statt…zu",
+    html:`
+      <section><h3>Purpose: um…zu</h3>
+      <div class="example"><span class="de">Er spart, <b>um</b> ein Auto <b>zu kaufen</b>.</span><button class="speak" data-de="Er spart, um ein Auto zu kaufen.">🔊</button><br><span class="en">He saves (in order) to buy a car.</span></div></section>
+      <section><h3>Without: ohne…zu</h3>
+      <div class="example"><span class="de">Er ging, <b>ohne</b> etwas <b>zu sagen</b>.</span><span class="en"> He left without saying anything.</span></div></section>
+      <section><h3>Instead of: (an)statt…zu</h3>
+      <div class="example"><span class="de"><b>Statt</b> zu arbeiten, schlief er.</span><span class="en"> Instead of working, he slept.</span></div></section>
+      <section><h3>Only if the subject is the same</h3>
+      <p>um/ohne/statt + zu only work when the subject of both clauses is identical. Otherwise use <b>damit</b> (so that) or a dass-clause.</p>
+      <div class="example"><span class="de">Ich lerne, <b>damit</b> du stolz bist. (different subjects → damit)</span><span class="en"> I learn so that you are proud.</span></div></section>
+      <section><h3>Subordinate word order</h3>
+      <p>conjunction → subject → objects → <b>verb at the end</b>. With two verbs, the conjugated one goes LAST: …, weil er das Buch <b>hätte lesen müssen</b>.</p></section>`},
+   {id:"a5", title:"Discourse Particles & Register", sub:"doch, ja, eben, halt, mal, wohl",
+    html:`
+      <p>Little words that carry huge meaning — they tell the listener how the speaker FEELS about the sentence. Hard to translate, essential to sound natural.</p>
+      <table><tr><th>particle</th><th>nuance</th><th>example</th></tr>
+      <tr><td>doch</td><td>contradiction / encouragement</td><td>Komm doch mit! (do come!) · Das ist doch klar! (that's obvious!)</td></tr>
+      <tr><td>ja</td><td>as you (already) know</td><td>Er ist ja Arzt. (he IS a doctor, you know)</td></tr>
+      <tr><td>eben / halt</td><td>that's just how it is</td><td>Das ist eben so. (that's just the way it is)</td></tr>
+      <tr><td>mal</td><td>softens requests</td><td>Schau mal! (take a look!)</td></tr>
+      <tr><td>wohl</td><td>presumably</td><td>Er ist wohl krank. (he's probably ill)</td></tr>
+      <tr><td>eigentlich</td><td>actually / by the way</td><td>Was machst du eigentlich? (so what do you do?)</td></tr></table>
+      <div class="example"><span class="de">Komm <b>doch mal</b> vorbei! Das ist <b>eben</b> so.</span><button class="speak" data-de="Komm doch mal vorbei!">🔊</button><br><span class="en">Do come by! That's just how it is.</span></div>
+      <section><h3>Register shifts</h3>
+      <p><b>Formal:</b> Konjunktiv I, nominal style, no particles: "Wie ist Ihr Name?" · <b>Colloquial:</b> particles, contractions (hab ich, geht's), filled pauses: "Wie heißt du noch gleich?"</p></section>
+      <div class="tip"><b>Listening tip:</b> you can't translate these words — listen to what they DO. "doch" in a question expects a "yes": Kommst du <b>doch</b>? (you will come after all, won't you?)</div>`},
+   {id:"a6", title:"Idioms & False Friends", sub:"ich verstehe nur Bahnhof",
+    html:`
+      <section><h3>Idioms worth knowing</h3>
+      <table><tr><th>German</th><th>meaning</th></tr>
+      <tr><td>Ich verstehe nur Bahnhof.</td><td>It's all Greek to me. (lit: I only understand "station")</td></tr>
+      <tr><td>Das ist nicht mein Bier.</td><td>That's not my business.</td></tr>
+      <tr><td>Da liegt der Hund begraben.</td><td>That's the crux of the matter.</td></tr>
+      <tr><td>Es ist noch kein Meister vom Himmel gefallen.</td><td>Nobody's born a master — practice makes perfect.</td></tr>
+      <tr><td>Tomaten auf den Augen haben.</td><td>to be blind to the obvious</td></tr>
+      <tr><td>Die Daumen drücken.</td><td>to keep one's fingers crossed</td></tr></table></section>
+      <section><h3>False friends (trickiest!)</h3>
+      <table><tr><th>German</th><th>actually means</th><th>not</th></tr>
+      <tr><td>bekommen</td><td>to GET</td><td>to become</td></tr>
+      <tr><td>Gift</td><td>POISON</td><td>present</td></tr>
+      <tr><td>Rat</td><td>advice</td><td>rat (die Ratte)</td></tr>
+      <tr><td>bald</td><td>SOON</td><td>bald</td></tr>
+      <tr><td>eventuell</td><td>possibly</td><td>eventually</td></tr>
+      <tr><td>sensibel</td><td>sensitive</td><td>sensible</td></tr>
+      <tr><td>aktuell</td><td>current / up-to-date</td><td>actually</td></tr>
+      <tr><td>Also</td><td>so / thus</td><td>also</td></tr></table></section>
+      <div class="example"><span class="de">Ich <b>bekomme</b> morgen mein Gehalt. (I GET my salary) · Achtung, das ist <b>Gift</b>! (poison!)</span><button class="speak" data-de="Ich bekomme morgen mein Gehalt.">🔊</button></div>
+      <div class="tip"><b>Never translate "bekommen" as "become"</b> — a classic mistake that can be quite dangerous near the word "Gift"!</div>`}
+  ],
+  vocab:[["die Erörterung","discussion / argumentative essay"],["die Stellungnahme","position statement"],["die Schlussfolgerung","conclusion"],
+    ["die Annahme","assumption"],["die Auswirkung","impact"],["der Zusammenhang","context / connection"],["der Standpunkt","viewpoint"],
+    ["erheblich","considerable"],["maßgeblich","decisive / instrumental"],["unvermeidlich","inevitable"],["umfassend","comprehensive"],
+    ["eingehend","thorough / in-depth"],["widerlegen","to refute"],["behaupten","to claim"],["erläutern","to explain in detail"],
+    ["verdeutlichen","to illustrate / clarify"],["voraussetzen","to presuppose"],["in Anspruch nehmen","to make use of"],
+    ["in Betracht ziehen","to consider"],["zur Diskussion stehen","to be under discussion"],["zum Ausdruck bringen","to express"],
+    ["eine Rolle spielen","to play a role"],["es kommt darauf an","it depends"],["meiner Meinung nach","in my opinion"],
+    ["demnach","accordingly"],["folglich","consequently"],["insofern","in that respect"],["dennoch","nevertheless"],
+    ["jedoch","however"],["trotz allem","despite everything"],["auf jeden Fall","in any case"],["Die Daumen drücken","keep fingers crossed"]],
+  quiz:[
+    {q:"Reported speech: “Er sagt, er ___ keine Zeit.” (haben)", opts:["hat","habe","hätte","hatt"], a:1, why:"Konjunktiv I of haben: er habe."},
+    {q:"“bekommen” actually means…", opts:["to become","to get / receive","to come","to begin"], a:1, why:"German 'bekommen' = to get. 'werden' = to become."},
+    {q:"“Gift” means…", opts:["present (gift)","poison","luck","price"], a:1, why:"Geschenk = present. Gift = poison — mind the context!"},
+    {q:"“in Betrieb nehmen” means…", opts:["to go on strike","to commission / put into operation","to take a break","to shut down"], a:1, why:"A classic Funktionsverbgefüge: to put into operation."},
+    {q:"Fill in: “die ___ Reform” (proposed by the government)", opts:["von der Regierung vorgeschlagene","vorgeschlagene von der Regierung","von der Regierung vorgeschlagenen","vorgeschlagen von der Regierung"], a:0, why:"Extended participial attribute: article + middle + participle + noun."},
+    {q:"Er spart, ___ ein Auto zu kaufen.", opts:["damit","weil","um","obwohl"], a:2, why:"purpose with same subject = um…zu."},
+    {q:"“Das ist eben so.” — what does “eben” convey?", opts:["surprise","that's just how it is","a question","anger"], a:1, why:"eben/halt = resignation: that's just the way it is."},
+    {q:"“Ich verstehe nur Bahnhof.” means…", opts:["I only understand the station","I understand German well","I don't understand anything","I missed the train"], a:2, why:"An idiom: I'm totally lost / it's all Greek to me."},
+    {q:"“Er ging, ohne etwas zu sagen.” is correct because…", opts:["ohne + zu + infinitive follows the same subject","ohne always takes the dative","ging is transitive","the verb must stay in position 2"], a:0, why:"ohne…zu requires the same subject in both clauses."},
+    {q:"“Es ist noch kein Meister vom Himmel gefallen.” means…", opts:["no one is born a master","the master fell","practice makes perfect","it's raining masters"], a:2, why:"Nobody's a master from the start — practice makes perfect."},
+    {q:"Which is a false friend for English speakers?", opts:["die Katze","aktuell","die Schule","das Wasser"], a:1, why:"aktuell = current, not 'actually'. 'actually' = eigentlich."},
+    {q:"“Konjunktiv I” is mainly used for…", opts:["unreal conditions","polite requests","reported speech","passive voice"], a:2, why:"News and formal writing use it to quote without endorsing."}]
+}
+};
+
+/* ============================== STATE ============================== */
+const S = {
+  level: localStorage.getItem("lde_level") || "basic",
+  done: JSON.parse(localStorage.getItem("lde_done") || "{}"),
+  quiz: JSON.parse(localStorage.getItem("lde_quiz") || "{}"),
+  days: JSON.parse(localStorage.getItem("lde_days") || "[]"),
+  view: "home",
+  lesson: null,
+  flash: { deck: [], i: 0, flipped: false, seen: {} },
+  quizRun: { q: 0, score: 0, done: false },
+};
+(function streak(){ const t=new Date().toISOString().slice(0,10); if(S.days[S.days.length-1]!==t){ S.days.push(t); if(S.days.length>30)S.days.shift(); save(); } })();
+function save(){ localStorage.setItem("lde_level",S.level); localStorage.setItem("lde_done",JSON.stringify(S.done));
+  localStorage.setItem("lde_quiz",JSON.stringify(S.quiz)); localStorage.setItem("lde_days",JSON.stringify(S.days)); }
+function L(){ return LEVELS[S.level]; }
+function doneCount(lv){ return (S.done[lv]||[]).length; }
+function isDone(lv,id){ return (S.done[lv]||[]).includes(id); }
+function markDone(lv,id){ if(!S.done[lv])S.done[lv]=[]; if(!S.done[lv].includes(id)){S.done[lv].push(id); save();} }
+function bestScore(lv){ return S.quiz[lv]||0; }
+
+/* ============================== HELPERS ============================== */
+const $ = s => document.querySelector(s);
+function el(html){ const t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstChild; }
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),1800); }
+function speak(text){ try{ if(!("speechSynthesis" in window)) return; const u=new SpeechSynthesisUtterance(text); u.lang="de-DE"; u.rate=0.85; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
+document.addEventListener("click", e=>{
+  const s=e.target.closest(".speak"); if(s){ speak(s.dataset.de); }
+});
+
+/* ============================== RENDER ============================== */
+function renderNav(){
+  document.querySelectorAll(".nav-links button").forEach(b=>b.classList.toggle("active", b.dataset.view===S.view));
+  $("#levelPills").innerHTML = Object.keys(LEVELS).map(k=>
+    `<button data-lv="${k}" class="${k===S.level?"active":""}">${LEVELS[k].name} <small>${LEVELS[k].range}</small></button>`).join("");
+}
+function bindPills(){
+  $("#levelPills").onclick = e=>{
+    const b=e.target.closest("[data-lv]"); if(!b) return;
+    S.level=b.dataset.lv; save(); renderNav(); render();
+  };
+  document.querySelectorAll(".nav-links button").forEach(b=>b.onclick=()=>{ S.view=b.dataset.view; S.lesson=null; renderNav(); render(); });
+}
+
+function render(){
+  renderNav();
+  const app=$("#app");
+  if(S.view==="home") app.innerHTML=homeHTML();
+  else if(S.view==="lessons") app.innerHTML = S.lesson ? lessonHTML(S.lesson) : lessonsHTML();
+  else if(S.view==="flash") app.innerHTML=flashHTML();
+  else if(S.view==="quiz") app.innerHTML=quizHTML();
+  else app.innerHTML=progressHTML();
+  bindApp();
+  window.scrollTo({top:0});
+}
+
+/* ---------------- HOME ---------------- */
+function homeHTML(){
+  const totalL=Object.values(LEVELS).reduce((a,l)=>a+l.lessons.length,0);
+  const totalV=Object.values(LEVELS).reduce((a,l)=>a+l.vocab.length,0);
+  const totalQ=Object.values(LEVELS).reduce((a,l)=>a+l.quiz.length,0);
+  return `
+  <div class="hero">
+    <h1>Willkommen! 🇩🇪 Learn German — from zero to fluent.</h1>
+    <p>Structured lessons, flashcards with pronunciation, and quizzes for three levels: Basic (A1–A2), Intermediate (B1–B2) and Advanced (C1–C2). All your progress is saved in this browser, and the whole app works offline.</p>
+    <div class="badges"><span>📚 ${totalL} lessons</span><span>🗂 ${totalV} flashcards</span><span>✍️ ${totalQ} quiz questions</span><span>🔊 German audio</span></div>
+  </div>
+  <h2 class="section">Choose your level</h2>
+  <div class="grid cards">
+    ${Object.keys(LEVELS).map(k=>{
+      const l=LEVELS[k]; const dl=doneCount(k); const qb=bestScore(k);
+      return `<div class="card" data-goto="${k}">
+        <span class="lvl-tag" style="background:${l.accent}1a;color:${l.accent}">${l.range}</span>
+        <h3>${l.name} German</h3>
+        <p>${l.blurb}</p>
+        <div class="meta"><span>📚 <b>${dl}/${l.lessons.length}</b> lessons</span><span>🗂 ${l.vocab.length} words</span><span>✍️ best quiz <b>${qb}%</b></span></div>
+      </div>`;
+    }).join("")}
+  </div>
+  <h2 class="section">Where to start?</h2>
+  <div class="card" data-view="lessons" data-lv="basic" style="cursor:pointer">
+    <h3>🚀 Start with Lesson 1: Alphabet & Sounds</h3>
+    <p>Every great German journey begins with <b>ei</b>, <b>ie</b> and <b>sch</b>. Ten minutes today saves you years of bad pronunciation.</p>
+  </div>`;
+}
+
+/* ---------------- LESSONS ---------------- */
+function lessonsHTML(){
+  const l=L();
+  return `
+  <h2 class="section">${l.name} Lessons <span style="color:var(--muted);font-weight:600;font-size:14px">(${l.range})</span></h2>
+  <div style="color:var(--muted);font-size:13px;margin-bottom:14px">${doneCount(S.level)} of ${l.lessons.length} completed</div>
+  <div class="bar" style="max-width:420px"><i style="width:${l.lessons.length?doneCount(S.level)/l.lessons.length*100:0}%"></i></div>
+  <div style="height:14px"></div>
+  ${l.lessons.map((ls,i)=>`
+    <div class="lesson-item ${isDone(S.level,ls.id)?"done":""}" data-lesson="${ls.id}">
+      <div class="num">${isDone(S.level,ls.id)?"✓":i+1}</div>
+      <div class="t"><b>${ls.title}</b><small>${ls.sub}</small></div>
+      ${isDone(S.level,ls.id)?'<span class="done-mark">done</span>':""}
+    </div>`).join("")}
+  <div style="height:16px"></div>
+  <button class="btn ghost" data-view="flash">🗂 Practice this level's words →</button>`;
+}
+
+function lessonHTML(id){
+  const ls=L().lessons.find(x=>x.id===id); if(!ls) return lessonsHTML();
+  const idx=L().lessons.findIndex(x=>x.id===id);
+  const prev=L().lessons[idx-1], next=L().lessons[idx+1];
+  return `
+  <div class="lesson-page">
+    <div class="crumbs"><span style="cursor:pointer" data-view="lessons">${L().name} · Lessons</span> / ${ls.title}</div>
+    <h2>${ls.title}</h2>
+    <div class="sub">${ls.sub}</div>
+    ${ls.html}
+    <div class="btn-row">
+      <button class="btn green" data-complete="${ls.id}">${isDone(S.level,ls.id)?"✓ Completed — again?":"✓ Mark as completed"}</button>
+      ${prev?`<button class="btn ghost" data-lesson="${prev.id}">← ${prev.title}</button>`:""}
+      ${next?`<button class="btn ghost" data-lesson="${next.id}">${next.title} →</button>`:""}
+    </div>
+  </div>`;
+}
+
+/* ---------------- FLASHCARDS ---------------- */
+function flashHTML(){
+  const l=L();
+  if(!S.flash.deck.length || S.flash.deck[0][2]!==S.level){
+    S.flash = { deck: l.vocab.map(v=>[...v,S.level]), i:0, flipped:false, seen:{} };
+  }
+  const c=S.flash.deck; if(!c.length) return "<p>No words yet.</p>";
+  const cur=c[S.flash.i];
+  const pct=(S.flash.i+1)/c.length*100;
+  return `
+  <h2 class="section">${l.name} Flashcards <span style="color:var(--muted);font-weight:600;font-size:14px">(${l.range})</span></h2>
+  <div class="flash-wrap">
+    <div class="flash-card" id="fcard">
+      <div class="art">${S.flash.flipped?cur[1]:cur[0].split(" ")[0]}</div>
+      <div class="de">${S.flash.flipped?cur[1]:cur[0]}</div>
+      ${S.flash.flipped?'<div class="en"></div>':'<div class="hint">tap to flip</div>'}
+    </div>
+    <div class="flash-controls">
+      <button class="btn ghost" id="fprev">←</button>
+      <button class="btn" id="fflip">Flip</button>
+      <button class="btn green" id="fknow">✓ Know it</button>
+      <button class="btn ghost" id="fnext">→</button>
+    </div>
+    <div class="flash-count"><span id="fcnt">${S.flash.i+1}</span> / ${c.length} · <button class="btn ghost" id="fshuf" style="padding:4px 10px;font-size:12.5px">🔀 shuffle</button> <button class="btn ghost" id="fspeak" style="padding:4px 10px;font-size:12.5px">🔊 pronounce</button></div>
+    <div class="progress-track"><i style="width:${pct}%"></i></div>
+  </div>`;
+}
+function flashUpdate(){
+  const c=S.flash.deck; const cur=c[S.flash.i];
+  $("#fcnt").textContent=S.flash.i+1;
+  const card=$("#fcard");
+  const art=S.flash.flipped?cur[1]:cur[0].split(" ")[0];
+  const de=S.flash.flipped?cur[1]:cur[0];
+  card.innerHTML=`<div class="art">${art}</div><div class="de">${de}</div>${S.flash.flipped?"":"<div class=\"hint\">tap to flip</div>"}`;
+  $("#fcard").onclick=flip;
+  $(".progress-track i").style.width=(S.flash.i+1)/c.length*100+"%";
+}
+function flip(){ S.flash.flipped=!S.flash.flipped; flashUpdate(); }
+
+/* ---------------- QUIZ ---------------- */
+function quizHTML(){
+  const l=L();
+  const qs=l.quiz;
+  const r=S.quizRun;
+  if(r.done){
+    const n=qs.length; const pct=Math.round(r.score/n*100);
+    const msg=pct>=90?"Ausgezeichnet! 🏆":pct>=70?"Sehr gut! 👍":pct>=50?"Gut, keep practicing!":"Weiter so — practice makes perfect! 💪";
+    return `
+    <h2 class="section">${l.name} Quiz</h2>
+    <div class="quiz-box"><div class="q-card score-end">
+      <div class="big">${r.score}/${n}</div>
+      <div class="msg">${msg}</div>
+      <div class="bar" style="max-width:300px;margin:0 auto 16px"><i style="width:${pct}%"></i></div>
+      <button class="btn" id="qretry">Try again</button>
+      <button class="btn ghost" data-view="lessons">Back to lessons</button>
+    </div></div>`;
+  }
+  const q=qs[r.q];
+  return `
+  <h2 class="section">${l.name} Quiz <span style="color:var(--muted);font-weight:600;font-size:14px">question ${r.q+1} of ${qs.length}</span></h2>
+  <div class="quiz-box">
+    <div class="progress-track"><i style="width:${r.q/qs.length*100}%"></i></div>
+    <div style="height:12px"></div>
+    <div class="q-card">
+      <div class="q">${q.q}</div>
+      <div class="opts" id="opts">
+        ${q.opts.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join("")}
+      </div>
+      <div class="why" id="why"></div>
+      <div class="btn-row" style="display:none" id="qnextrow"><button class="btn" id="qnext">${r.q+1<qs.length?"Next question →":"See results 🎉"}</button></div>
+    </div>
+  </div>`;
+}
+function quizAnswer(i){
+  const l=L(); const qs=l.quiz; const r=S.quizRun; const q=qs[r.q];
+  document.querySelectorAll(".opt").forEach(b=>{ b.disabled=true; });
+  const opts=document.querySelectorAll(".opt");
+  opts[q.a].classList.add("correct");
+  if(i!==q.a){ opts[i].classList.add("wrong"); }
+  else r.score++;
+  const why=$("#why"); why.innerHTML="<b>"+(i===q.a?"✓ Correct!":"✗ Not quite.")+"</b> "+q.why; why.classList.add("show");
+  $("#qnextrow").style.display="flex";
+}
+
+/* ---------------- PROGRESS ---------------- */
+function progressHTML(){
+  const totalL=Object.values(LEVELS).reduce((a,l)=>a+l.lessons.length,0);
+  const totalD=Object.keys(LEVELS).reduce((a,k)=>a+doneCount(k),0);
+  return `
+  <h2 class="section">Your progress</h2>
+  <div class="stat-grid">
+    <div class="stat"><div class="v">${totalD}/${totalL}</div><div class="l">Lessons completed</div><div class="bar"><i style="width:${totalL?totalD/totalL*100:0}%"></i></div></div>
+    <div class="stat"><div class="v">${S.days.length}</div><div class="l">Day streak / study days</div></div>
+    <div class="stat"><div class="v">${Math.round(Object.values(S.quiz).reduce((a,b)=>a+b,0)/Math.max(1,Object.values(S.quiz).length))}%</div><div class="l">Average quiz score</div></div>
+  </div>
+  <div style="height:18px"></div>
+  ${Object.keys(LEVELS).map(k=>{
+    const l=LEVELS[k]; const dl=doneCount(k); const qb=bestScore(k);
+    return `<div class="card" style="cursor:default;margin-bottom:12px">
+      <h3>${l.name} <span style="font-size:12.5px;color:var(--muted)">${l.range}</span></h3>
+      <div class="meta" style="margin-top:8px"><span>📚 ${dl}/${l.lessons.length} lessons</span><span>✍️ best quiz: <b>${qb}%</b></span></div>
+      <div class="bar" style="margin-top:10px"><i style="width:${l.lessons.length?dl/l.lessons.length*100:0}%"></i></div>
+      <button class="btn ghost" data-lv="${k}" data-view="lessons" style="margin-top:12px;padding:7px 14px;font-size:13px">Continue ${l.name} →</button>
+    </div>`;
+  }).join("")}
+  <div style="height:10px"></div>
+  <button class="btn ghost" id="reset">🗑 Reset all progress</button>`;
+}
+
+/* ============================== BIND ============================== */
+function bindApp(){
+  // home level cards
+  document.querySelectorAll("[data-goto]").forEach(c=>c.onclick=()=>{ S.level=c.dataset.goto; save(); renderNav(); render(); });
+  // generic view switches
+  document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{ S.view=b.dataset.view; if(b.dataset.lv){S.level=b.dataset.lv; save();} S.lesson=null; renderNav(); render(); });
+  // lesson open / complete
+  document.querySelectorAll("[data-lesson]").forEach(b=>b.onclick=()=>{ S.lesson=b.dataset.lesson; render(); });
+  const comp=document.querySelector("[data-complete]");
+  if(comp) comp.onclick=()=>{ markDone(S.level,comp.dataset.complete); toast("Lesson completed! 🎉"); render(); };
+  // flashcards
+  const fcard=document.querySelector("#fcard"); if(fcard) fcard.onclick=flip;
+  const ff=document.querySelector("#fflip"); if(ff) ff.onclick=flip;
+  const fn=document.querySelector("#fnext"); if(fn) fn.onclick=()=>{ S.flash.i=(S.flash.i+1)%S.flash.deck.length; S.flash.flipped=false; flashUpdate(); };
+  const fp=document.querySelector("#fprev"); if(fp) fp.onclick=()=>{ S.flash.i=(S.flash.i-1+S.flash.deck.length)%S.flash.deck.length; S.flash.flipped=false; flashUpdate(); };
+  const fk=document.querySelector("#fknow"); if(fk) fk.onclick=()=>{ S.flash.seen[S.flash.i]=1; toast("Nice! 👍"); S.flash.i=(S.flash.i+1)%S.flash.deck.length; S.flash.flipped=false; flashUpdate(); };
+  const fs=document.querySelector("#fshuf"); if(fs) fs.onclick=()=>{ for(let i=S.flash.deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[S.flash.deck[i],S.flash.deck[j]]=[S.flash.deck[j],S.flash.deck[i]];} S.flash.i=0; S.flash.flipped=false; flashUpdate(); };
+  const fsp=document.querySelector("#fspeak"); if(fsp) fsp.onclick=()=>speak(S.flash.deck[S.flash.i][0]);
+  // quiz
+  const qopts=document.querySelectorAll(".opt");
+  if(qopts.length) qopts.forEach(o=>o.onclick=()=>quizAnswer(+o.dataset.i));
+  const qn=document.querySelector("#qnext");
+  if(qn) qn.onclick=()=>{ const l=L(); if(S.quizRun.q+1<l.quiz.length){ S.quizRun.q++; render(); } else {
+      const n=l.quiz.length; const pct=Math.round(S.quizRun.score/n*100);
+      if(pct>S.quiz[l.key?l.key:S.level]){ S.quiz[S.level]=pct; save(); }
+      S.quizRun.done=true; render(); } };
+  const qr=document.querySelector("#qretry"); if(qr) qr.onclick=()=>{ S.quizRun={q:0,score:0,done:false}; render(); };
+  const rs=document.querySelector("#reset");
+  if(rs) rs.onclick=()=>{ if(confirm("Reset all progress?")){ localStorage.removeItem("lde_done"); localStorage.removeItem("lde_quiz"); localStorage.removeItem("lde_days"); location.reload(); } };
+}
+
+/* ============================== START ============================== */
+renderNav(); bindPills(); render();
+</script>
+</body>
+</html>
