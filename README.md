@@ -2,7 +2,7 @@
 
 A complete, offline-capable German learning website covering **Basic (A1–A2)**, **Intermediate (B1–B2)** and **Advanced (C1–C2)**.
 
-**Live:** https://yams-radar.duckdns.org/lernen-deutschdaily/
+**Live:** https://lernen-deutschdaily.duckdns.org/
 
 ## Features
 
