@@ -2,7 +2,9 @@
 
 A complete, offline-capable German learning website covering **Basic (A1–A2)**, **Intermediate (B1–B2)** and **Advanced (C1–C2)**.
 
-**Live:** https://lernen-deutschdaily.duckdns.org/
+**Live:**
+- https://lernen-deutschdaily.duckdns.org/ (VPS, with HTTPS security headers)
+- https://yamsim-bot.github.io/lern-deutsch/ (GitHub Pages mirror)
 
 ## Features
 
