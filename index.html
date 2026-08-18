@@ -150,6 +150,7 @@
       <button data-view="flash">Flashcards</button>
       <button data-view="quiz">Quiz</button>
       <button data-view="progress">Progress</button>
+      <button data-view="courses">Courses</button>
     </div>
   </div>
   <div class="level-pills" id="levelPills"></div>
@@ -168,6 +169,43 @@ basic:{name:"Basic", range:"A1–A2", blurb:"Start from zero: alphabet, greeting
    {id:"b1", title:"Alphabet & Sounds", sub:"Pronunciation is the foundation",
     html:`
       <p>German has the same 26 letters as English plus three umlauts <b>ä ö ü</b> and the <b>ß</b> (sharp s). The golden rule: <b>German is written as it sounds</b> — learn a few letter pairs and you can read anything.</p>
+      <section><h3>The German Alphabet (Das Alphabet)</h3>
+      <p>Each letter has a German name. Say the letter, then the name — this is how you spell words out loud.</p>
+      <table><tr><th>Letter</th><th>German Name</th><th>Pronunciation</th><th>Example</th></tr>
+      <tr><td><b>A a</b></td><td>ah</td><td>like English &quot;ah&quot;</td><td>Apfel (apple)</td></tr>
+      <tr><td><b>B b</b></td><td>beh</td><td>like &quot;bay&quot;</td><td>Buch (book)</td></tr>
+      <tr><td><b>C c</b></td><td>tsēh</td><td>like &quot;tsey&quot;</td><td>Café (café)</td></tr>
+      <tr><td><b>D d</b></td><td>deh</td><td>like &quot;day&quot;</td><td>Dachs (badger)</td></tr>
+      <tr><td><b>E e</b></td><td>eh</td><td>like &quot;eh&quot;</td><td>Esel (donkey)</td></tr>
+      <tr><td><b>F f</b></td><td>eff</td><td>like English &quot;f&quot;</td><td>Fisch (fish)</td></tr>
+      <tr><td><b>G g</b></td><td>geh</td><td>like &quot;gay&quot;</td><td>Gut (good)</td></tr>
+      <tr><td><b>H h</b></td><td>hah</td><td>like &quot;hah&quot; (breathy)</td><td>Haus (house)</td></tr>
+      <tr><td><b>I i</b></td><td>ih</td><td>like &quot;ee&quot; short</td><td>Igel (hedgehog)</td></tr>
+      <tr><td><b>J j</b></td><td>yot</td><td>like English &quot;y&quot;</td><td>Ja (yes)</td></tr>
+      <tr><td><b>K k</b></td><td>kah</td><td>like &quot;kah&quot;</td><td>Katze (cat)</td></tr>
+      <tr><td><b>L l</b></td><td>ell</td><td>like English &quot;l&quot;</td><td>Lampe (lamp)</td></tr>
+      <tr><td><b>M m</b></td><td>emm</td><td>like English &quot;m&quot;</td><td>Mann (man)</td></tr>
+      <tr><td><b>N n</b></td><td>enn</td><td>like English &quot;n&quot;</td><td>Nacht (night)</td></tr>
+      <tr><td><b>O o</b></td><td>oh</td><td>like &quot;oh&quot;</td><td>Orange (orange)</td></tr>
+      <tr><td><b>P p</b></td><td>peh</td><td>like &quot;pay&quot;</td><td>Pferd (horse)</td></tr>
+      <tr><td><b>Q q</b></td><td>kū</td><td>like &quot;koo&quot;</td><td>Qualität (quality)</td></tr>
+      <tr><td><b>R r</b></td><td>err</td><td>rolled &quot;r&quot; in throat</td><td>Rot (red)</td></tr>
+      <tr><td><b>S s</b></td><td>ess</td><td>&quot;z&quot; before vowels, &quot;s&quot; after</td><td>Sonne (sun)</td></tr>
+      <tr><td><b>T t</b></td><td>teh</td><td>like &quot;tay&quot;</td><td>Tisch (table)</td></tr>
+      <tr><td><b>U u</b></td><td>uh</td><td>like &quot;oo&quot; short</td><td>Uhr (clock)</td></tr>
+      <tr><td><b>V v</b></td><td>fau</td><td>like &quot;fow&quot;</td><td>Vater (father)</td></tr>
+      <tr><td><b>W w</b></td><td>veh</td><td>like English &quot;v&quot;</td><td>Wasser (water)</td></tr>
+      <tr><td><b>X x</b></td><td>iks</td><td>like English &quot;x&quot;</td><td>Axel (axle)</td></tr>
+      <tr><td><b>Y y</b></td><td>üpsilon</td><td>like German &quot;ü&quot;</td><td>Yacht (yacht)</td></tr>
+      <tr><td><b>Z z</b></td><td>tssett</td><td>like &quot;tset&quot;</td><td>Zahn (tooth)</td></tr></table>
+      <div class="tip"><b>Key traps for English speakers:</b> <b>J</b> = &quot;y&quot; sound · <b>W</b> = &quot;v&quot; sound · <b>V</b> = &quot;f&quot; sound · <b>Z</b> = &quot;ts&quot; sound · <b>S</b> before vowel = &quot;z&quot; sound.</div>
+      <div class="example"><span class="de">Ich spreche kein Deutsch. Können Sie mir helfen?</span><button class="speak" data-de="Ich spreche kein Deutsch. Können Sie mir helfen?">🔊</button><br><span class="en">I don&amp;t speak German. Can you help me?</span></div>
+      <section><h3>Umlauts &amp; Special Letters</h3>
+      <table><tr><th>Letter</th><th>German Name</th><th>Pronunciation</th><th>Example</th></tr>
+      <tr><td><b>Ä ä</b></td><td>äh</td><td>like &quot;eh&quot; in &quot;bed&quot;</td><td>Männer (men)</td></tr>
+      <tr><td><b>Ö ö</b></td><td>öh</td><td>lips rounded, say &quot;er&quot;</td><td>schön (beautiful)</td></tr>
+      <tr><td><b>Ü ü</b></td><td>üh</td><td>lips rounded, say &quot;ee&quot;</td><td>über (over)</td></tr>
+      <tr><td><b>ß</b></td><td>Eszett / sharp S</td><td>sharp &quot;s&quot; (after long vowel)</td><td>Straße (street)</td></tr></table></section>
       <section><h3>Vowel pairs (always say them as ONE sound)</h3>
       <table><tr><th>Letters</th><th>Sound</th><th>Examples</th></tr>
       <tr><td>ei</td><td>"eye"</td><td>mein, nein, zwei, drei</td></tr>
@@ -640,9 +678,77 @@ function render(){
   else if(S.view==="lessons") app.innerHTML = S.lesson ? lessonHTML(S.lesson) : lessonsHTML();
   else if(S.view==="flash") app.innerHTML=flashHTML();
   else if(S.view==="quiz") app.innerHTML=quizHTML();
+  else if(S.view==="courses") app.innerHTML=coursesHTML();
   else app.innerHTML=progressHTML();
   bindApp();
   window.scrollTo({top:0});
+}
+
+
+/* ---------------- COURSES & WORKBOOK ---------------- */
+function coursesHTML(){
+  return `
+  <div class="hero" style="background:linear-gradient(135deg,#1a7f37 0%,#2b6cb0 100%)">
+    <h1>📚 German Courses &amp; Workbook</h1>
+    <p>Download structured courses and practice workbooks to accelerate your learning. Print them out or use them on your tablet.</p>
+    <div class="badges"><span>📖 Courses</span><span>📝 Workbooks</span><span>🎧 Audio</span><span>📱 Offline</span></div>
+  </div>
+
+  <h2 class="section">📖 Course Materials</h2>
+  <div class="grid cards">
+    <div class="card" style="border-left:4px solid #e10600">
+      <div class="lvl-tag" style="background:#fde8e8;color:#e10600">BASIC · A1–A2</div>
+      <h3>German Fundamentals Course</h3>
+      <p>Complete beginner course covering alphabet, pronunciation, greetings, numbers, basic grammar, and everyday conversations.</p>
+      <div class="meta"><span>📄 <b>PDF Course</b></span><span>⏱ 10 units</span></div>
+      <div class="btn-row"><a class="btn" href="courses/German_Fundamentals_A1_A2.pdf" download>📥 Download Course</a></div>
+    </div>
+    <div class="card" style="border-left:4px solid #2b6cb0">
+      <div class="lvl-tag" style="background:#e8f0fd;color:#2b6cb0">INTERMEDIATE · B1–B2</div>
+      <h3>German Conversational Course</h3>
+      <p>Intermediate course on complex grammar, subjunctive, relative clauses, formal writing, and fluent conversation skills.</p>
+      <div class="meta"><span>📄 <b>PDF Course</b></span><span>⏱ 12 units</span></div>
+      <div class="btn-row"><a class="btn" href="courses/German_Conversational_B1_B2.pdf" download>📥 Download Course</a></div>
+    </div>
+    <div class="card" style="border-left:4px solid #ffce00">
+      <div class="lvl-tag" style="background:#fef9e7;color:#b8860b">ADVANCED · C1–C2</div>
+      <h3>German Mastery Course</h3>
+      <p>Advanced course covering academic German, business communication, idiomatic expressions, and exam preparation (TestDaF/DSH).</p>
+      <div class="meta"><span>📄 <b>PDF Course</b></span><span>⏱ 10 units</span></div>
+      <div class="btn-row"><a class="btn" href="courses/German_Mastery_C1_C2.pdf" download>📥 Download Course</a></div>
+    </div>
+  </div>
+
+  <h2 class="section">📝 Workbook &amp; Practice</h2>
+  <div class="grid cards">
+    <div class="card" style="border-left:4px solid #1a7f37">
+      <div class="lvl-tag" style="background:#e8f8ee;color:#1a7f37">BASIC</div>
+      <h3>Beginner Workbook</h3>
+      <p>Fill-in-the-blank exercises, matching, and writing practice for A1–A2 level. Covers articles, verb conjugation, sentence structure, and vocabulary.</p>
+      <div class="meta"><span>📝 <b>PDF Workbook</b></span><span>✏️ 50+ exercises</span></div>
+      <div class="btn-row"><a class="btn green" href="workbooks/Beginner_Workbook_A1_A2.pdf" download>📥 Download Workbook</a></div>
+    </div>
+    <div class="card" style="border-left:4px solid #6b46c1">
+      <div class="lvl-tag" style="background:#f0e8fd;color:#6b46c1">INTERMEDIATE</div>
+      <h3>Intermediate Workbook</h3>
+      <p>Reading comprehension, writing prompts, grammar drills, and conversation practice for B1–B2 learners.</p>
+      <div class="meta"><span>📝 <b>PDF Workbook</b></span><span>✏️ 40+ exercises</span></div>
+      <div class="btn-row"><a class="btn green" href="workbooks/Intermediate_Workbook_B1_B2.pdf" download>📥 Download Workbook</a></div>
+    </div>
+    <div class="card" style="border-left:4px solid #d69e2e">
+      <div class="lvl-tag" style="background:#fef9e7;color:#d69e2e">ADVANCED</div>
+      <h3>Advanced Workbook</h3>
+      <p>Essay writing, formal letter composition, literature analysis, and exam-style practice for C1–C2 learners.</p>
+      <div class="meta"><span>📝 <b>PDF Workbook</b></span><span>✏️ 30+ exercises</span></div>
+      <div class="btn-row"><a class="btn green" href="workbooks/Advanced_Workbook_C1_C2.pdf" download>📥 Download Workbook</a></div>
+    </div>
+  </div>
+
+  <h2 class="section">🎧 Audio Resources</h2>
+  <div class="tip"><b>Coming soon:</b> Audio pronunciation guides for each lesson. Check back for downloadable MP3 files with native German speaker recordings.</div>
+
+  <div class="tip" style="margin-top:20px;border-color:#e10600;background:#fef2f2"><b>📤 Upload your materials:</b> Have PDFs from Telegram saved messages? Send them to the LernDeutsch bot in Telegram and they'll appear here automatically.</div>
+  `;
 }
 
 /* ---------------- HOME ---------------- */
