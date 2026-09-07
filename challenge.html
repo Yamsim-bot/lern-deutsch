@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Deutsch Challenge — Did the course work?</title>
+<style>
+:root{--bg:#0f1115;--card:#1a1e26;--line:#2a3040;--ink:#f2f4f8;--muted:#9aa3b5;--green:#22c55e;--red:#ef4444;--gold:#f59e0b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif;display:flex;justify-content:center;min-height:100vh}
+#app{width:min(640px,100%);padding:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin:12px 0}
+h1{font-size:26px;margin:6px 0}h2{font-size:20px;margin:4px 0}
+button{cursor:pointer;border:1px solid var(--line);background:#232936;color:var(--ink);border-radius:10px;padding:12px 16px;font-size:15.5px;width:100%;margin:6px 0}
+button:hover{border-color:#888}.opt.correct{background:#052e16;border-color:var(--green)}.opt.wrong{background:#3b0a0a;border-color:var(--red)}
+.row{display:flex;gap:8px}.row button{flex:1}
+.muted{color:var(--muted)}.big{font-size:34px;font-weight:800}
+.bar{height:10px;background:#111;border-radius:6px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--gold);width:0}
+.timer{font-size:14px;color:var(--gold)}.score{font-size:14px;color:var(--muted)}
+.de{font-size:30px;font-weight:800;text-align:center;margin:14px 0}
+.pill{display:inline-block;padding:2px 10px;border-radius:20px;background:#232936;border:1px solid var(--line);font-size:13px;margin:2px}
+</style></head><body><div id="app"></div>
+<script>
+const VOCAB=[["der Mann", "man", "basic"], ["die Frau", "woman", "basic"], ["das Kind", "child", "basic"], ["das Haus", "house", "basic"], ["das Auto", "car", "basic"], ["das Wasser", "water", "basic"], ["das Brot", "bread", "basic"], ["die Milch", "milk", "basic"], ["der Kaffee", "coffee", "basic"], ["der Tee", "tea", "basic"], ["der Tag", "day", "basic"], ["die Nacht", "night", "basic"], ["der Morgen", "morning", "basic"], ["der Abend", "evening", "basic"], ["heute", "today", "basic"], ["morgen", "tomorrow", "basic"], ["gestern", "yesterday", "basic"], ["die Arbeit", "work", "basic"], ["die Schule", "school", "basic"], ["die Familie", "family", "basic"], ["die Mutter", "mother", "basic"], ["der Vater", "father", "basic"], ["der Bruder", "brother", "basic"], ["die Schwester", "sister", "basic"], ["der Freund", "friend (m)", "basic"], ["die Freundin", "friend (f)", "basic"], ["essen", "to eat", "basic"], ["trinken", "to drink", "basic"], ["gehen", "to go", "basic"], ["kommen", "to come", "basic"], ["sprechen", "to speak", "basic"], ["sehen", "to see", "basic"], ["hören", "to hear", "basic"], ["machen", "to make / do", "basic"], ["kaufen", "to buy", "basic"], ["das Geld", "money", "basic"], ["groß", "big / tall", "basic"], ["klein", "small", "basic"], ["gut", "good", "basic"], ["schlecht", "bad", "basic"], ["die Reise", "trip / journey", "intermediate"], ["der Flughafen", "airport", "intermediate"], ["die Verspätung", "delay", "intermediate"], ["der Termin", "appointment", "intermediate"], ["die Verhandlung", "negotiation", "intermediate"], ["die Gesundheit", "health", "intermediate"], ["die Versicherung", "insurance", "intermediate"], ["die Umwelt", "environment", "intermediate"], ["die Wirtschaft", "economy", "intermediate"], ["die Politik", "politics", "intermediate"], ["die Erfahrung", "experience", "intermediate"], ["der Fortschritt", "progress", "intermediate"], ["die Zukunft", "future", "intermediate"], ["die Vergangenheit", "past", "intermediate"], ["der Vertrag", "contract", "intermediate"], ["der Kunde", "customer", "intermediate"], ["der Mitarbeiter", "employee / colleague", "intermediate"], ["der Arbeitgeber", "employer", "intermediate"], ["der Arbeitnehmer", "employee (worker)", "intermediate"], ["das Gehalt", "salary", "intermediate"], ["die Steuer", "tax", "intermediate"], ["die Rechnung", "bill / invoice", "intermediate"], ["bezahlen", "to pay", "intermediate"], ["überweisen", "to transfer (money)", "intermediate"], ["buchen", "to book", "intermediate"], ["stornieren", "to cancel", "intermediate"], ["entwickeln", "to develop", "intermediate"], ["verbessern", "to improve", "intermediate"], ["unterstützen", "to support", "intermediate"], ["entscheiden", "to decide", "intermediate"], ["vergessen", "to forget", "intermediate"], ["sich erinnern", "to remember", "intermediate"], ["erklären", "to explain", "intermediate"], ["verstehen", "to understand", "intermediate"], ["teilnehmen", "to participate", "intermediate"], ["stattfinden", "to take place", "intermediate"], ["ankündigen", "to announce", "intermediate"], ["vorbereiten", "to prepare", "intermediate"], ["anfangen", "to begin", "intermediate"], ["aufhören", "to stop", "intermediate"], ["nachhaltig", "sustainable", "intermediate"], ["allerdings", "however", "intermediate"], ["die Erörterung", "discussion / argumentative essay", "advanced"], ["die Stellungnahme", "position statement", "advanced"], ["die Schlussfolgerung", "conclusion", "advanced"], ["die Annahme", "assumption", "advanced"], ["die Auswirkung", "impact", "advanced"], ["der Zusammenhang", "context / connection", "advanced"], ["der Standpunkt", "viewpoint", "advanced"], ["erheblich", "considerable", "advanced"], ["maßgeblich", "decisive / instrumental", "advanced"], ["unvermeidlich", "inevitable", "advanced"], ["umfassend", "comprehensive", "advanced"], ["eingehend", "thorough / in-depth", "advanced"], ["widerlegen", "to refute", "advanced"], ["behaupten", "to claim", "advanced"], ["erläutern", "to explain in detail", "advanced"], ["verdeutlichen", "to illustrate / clarify", "advanced"], ["voraussetzen", "to presuppose", "advanced"], ["in Anspruch nehmen", "to make use of", "advanced"], ["in Betracht ziehen", "to consider", "advanced"], ["zur Diskussion stehen", "to be under discussion", "advanced"], ["zum Ausdruck bringen", "to express", "advanced"], ["eine Rolle spielen", "to play a role", "advanced"], ["es kommt darauf an", "it depends", "advanced"], ["meiner Meinung nach", "in my opinion", "advanced"], ["demnach", "accordingly", "advanced"], ["folglich", "consequently", "advanced"], ["insofern", "in that respect", "advanced"], ["dennoch", "nevertheless", "advanced"], ["jedoch", "however", "advanced"], ["trotz allem", "despite everything", "advanced"], ["auf jeden Fall", "in any case", "advanced"], ["Die Daumen drücken", "keep fingers crossed", "advanced"]];
+const QUIZ=[{"q": "What does “danke” mean?", "opts": ["please", "thank you", "sorry", "goodbye"], "a": 1, "why": "Danke = thank you. “Bitte” can mean please or you're welcome.", "lvl": "basic"}, {"q": "Which article belongs to “Frau”?", "opts": ["der", "die", "das", "den"], "a": 1, "why": "die Frau — female people are feminine.", "lvl": "basic"}, {"q": "ich + sein = ?", "opts": ["ich bist", "ich ist", "ich bin", "ich sind"], "a": 2, "why": "ich bin — one of the first forms you must memorize.", "lvl": "basic"}, {"q": "“wir” means…", "opts": ["you", "they", "we", "she"], "a": 2, "why": "wir = we. Sie (capital S) = formal you; sie = they.", "lvl": "basic"}, {"q": "er + haben = ?", "opts": ["er habt", "er hat", "er hast", "er haben"], "a": 1, "why": "er/sie/es hat.", "lvl": "basic"}, {"q": "Complete: “Ich ___ Deutsch.” (to learn)", "opts": ["lerne", "lernst", "lernt", "lernen"], "a": 0, "why": "ich lerne — ending -e for ich.", "lvl": "basic"}, {"q": "“morgen” means…", "opts": ["yesterday", "today", "tomorrow", "evening"], "a": 2, "why": "morgen = tomorrow; gestern = yesterday; heute = today.", "lvl": "basic"}, {"q": "“halb fünf” = ?", "opts": ["5:30", "4:30", "5:15", "4:45"], "a": 1, "why": "German counts half TO the next hour: halb fünf = 4:30.", "lvl": "basic"}, {"q": "Ich gehe ___ dem Freund. (with)", "opts": ["zu", "mit", "von", "bei"], "a": 1, "why": "mit + dative = with. dem is dative of der.", "lvl": "basic"}, {"q": "Accusative of “der Mann” is…", "opts": ["der Mann", "die Mann", "den Mann", "dem Mann"], "a": 2, "why": "Only masculine changes in accusative: der → den.", "lvl": "basic"}, {"q": "“Es tut mir leid” means…", "opts": ["I'm sorry", "See you later", "Good luck", "No problem"], "a": 0, "why": "A core apology phrase: It does me sorrow = I'm sorry.", "lvl": "basic"}, {"q": "Which is correct?", "opts": ["Ich bin ein Student", "Ich habe ein Student", "Ich bin Student", "Ich bin eine Student"], "a": 2, "why": "Nationalities/professions drop the article: Ich bin Student.", "lvl": "basic"}, {"q": "Perfekt of “machen”?", "opts": ["gemachen", "gemacht", "machet", "gemachtet"], "a": 1, "why": "regular: ge- + mach + -t = gemacht.", "lvl": "intermediate"}, {"q": "Ich ___ gestern gearbeitet.", "opts": ["bin", "habe", "hat", "ist"], "a": 1, "why": "arbeiten takes haben: Ich habe gearbeitet.", "lvl": "intermediate"}, {"q": "Er ___ nach Berlin gefahren.", "opts": ["hat", "ist", "wird", "habe"], "a": 1, "why": "fahren = movement → sein: Er ist gefahren.", "lvl": "intermediate"}, {"q": "“Hier darf man nicht rauchen” means…", "opts": ["smoking is optional", "you must smoke here", "smoking is forbidden", "smoking is allowed"], "a": 2, "why": "nicht dürfen = forbidden; nicht müssen would be optional.", "lvl": "intermediate"}, {"q": "Wohin? — Ich lege das Buch ___ den Tisch.", "opts": ["auf", "mit", "bei", "von"], "a": 0, "why": "motion (Wohin?) → accusative → auf den Tisch.", "lvl": "intermediate"}, {"q": "Das Haus ___ gebaut.", "opts": ["ist", "wird", "hat", "werden"], "a": 1, "why": "present passive: werden + Partizip II → wird gebaut.", "lvl": "intermediate"}, {"q": "“Ich würde gern nach Berlin fahren” means…", "opts": ["I must go to Berlin", "I drove to Berlin", "I would like to go to Berlin", "I went to Berlin"], "a": 2, "why": "würde + infinitive = would like to.", "lvl": "intermediate"}, {"q": "Die Frau, ___ neben mir sitzt, ist nett.", "opts": ["der", "den", "die", "dem"], "a": 2, "why": "die Frau is feminine; relative pronoun in nominative = die.", "lvl": "intermediate"}, {"q": "“ein ___ Mann” (gut)", "opts": ["gute", "guten", "guter", "gutes"], "a": 2, "why": "after ein-word, masculine nominative takes -er: ein guter Mann.", "lvl": "intermediate"}, {"q": "“Ich bleibe zu Hause, weil es regnet.” — the verb is at the end because…", "opts": ["weil is a coordinating conjunction", "weil is a subordinating conjunction", "the sentence is a question", "regnet is separable"], "a": 1, "why": "weil sends the verb to the end.", "lvl": "intermediate"}, {"q": "“nicht müssen” means…", "opts": ["must not (forbidden)", "don't have to (optional)", "can't", "won't"], "a": 1, "why": "nicht müssen = not necessary; nicht dürfen = forbidden.", "lvl": "intermediate"}, {"q": "Which is dative?", "opts": ["den Tisch", "dem Tisch", "der Tisch", "einen Tisch"], "a": 1, "why": "dem = dative masculine; den = accusative; der = nominative.", "lvl": "intermediate"}, {"q": "Reported speech: “Er sagt, er ___ keine Zeit.” (haben)", "opts": ["hat", "habe", "hätte", "hatt"], "a": 1, "why": "Konjunktiv I of haben: er habe.", "lvl": "advanced"}, {"q": "“bekommen” actually means…", "opts": ["to become", "to get / receive", "to come", "to begin"], "a": 1, "why": "German 'bekommen' = to get. 'werden' = to become.", "lvl": "advanced"}, {"q": "“Gift” means…", "opts": ["present (gift)", "poison", "luck", "price"], "a": 1, "why": "Geschenk = present. Gift = poison — mind the context!", "lvl": "advanced"}, {"q": "“in Betrieb nehmen” means…", "opts": ["to go on strike", "to commission / put into operation", "to take a break", "to shut down"], "a": 1, "why": "A classic Funktionsverbgefüge: to put into operation.", "lvl": "advanced"}, {"q": "Fill in: “die ___ Reform” (proposed by the government)", "opts": ["von der Regierung vorgeschlagene", "vorgeschlagene von der Regierung", "von der Regierung vorgeschlagenen", "vorgeschlagen von der Regierung"], "a": 0, "why": "Extended participial attribute: article + middle + participle + noun.", "lvl": "advanced"}, {"q": "Er spart, ___ ein Auto zu kaufen.", "opts": ["damit", "weil", "um", "obwohl"], "a": 2, "why": "purpose with same subject = um…zu.", "lvl": "advanced"}, {"q": "“Das ist eben so.” — what does “eben” convey?", "opts": ["surprise", "that's just how it is", "a question", "anger"], "a": 1, "why": "eben/halt = resignation: that's just the way it is.", "lvl": "advanced"}, {"q": "“Ich verstehe nur Bahnhof.” means…", "opts": ["I only understand the station", "I understand German well", "I don't understand anything", "I missed the train"], "a": 2, "why": "An idiom: I'm totally lost / it's all Greek to me.", "lvl": "advanced"}, {"q": "“Er ging, ohne etwas zu sagen.” is correct because…", "opts": ["ohne + zu + infinitive follows the same subject", "ohne always takes the dative", "ging is transitive", "the verb must stay in position 2"], "a": 0, "why": "ohne…zu requires the same subject in both clauses.", "lvl": "advanced"}, {"q": "“Es ist noch kein Meister vom Himmel gefallen.” means…", "opts": ["no one is born a master", "the master fell", "practice makes perfect", "it's raining masters"], "a": 2, "why": "Nobody's a master from the start — practice makes perfect.", "lvl": "advanced"}, {"q": "Which is a false friend for English speakers?", "opts": ["die Katze", "aktuell", "die Schule", "das Wasser"], "a": 1, "why": "aktuell = current, not 'actually'. 'actually' = eigentlich.", "lvl": "advanced"}, {"q": "“Konjunktiv I” is mainly used for…", "opts": ["unreal conditions", "polite requests", "reported speech", "passive voice"], "a": 2, "why": "News and formal writing use it to quote without endorsing.", "lvl": "advanced"}];
+const S = {mode:null, pool:[], qi:0, score:0, lives:3, time:60, timer:null, hits:0, perLvl:{}, t0:0};
+const $ = id => document.getElementById(id);
+const app = $('app') || document.querySelector('#app');
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='de-DE';speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+function best(k){try{return +(localStorage.getItem('dc_'+k)||0);}catch(e){return 0;}}
+function saveBest(k,v){try{if(v>best(k))localStorage.setItem('dc_'+k,v);}catch(e){}}
+function home(){
+  clearInterval(S.timer);
+  app.innerHTML = `<h1>⚡ Deutsch Challenge</h1>
+  <p class="muted">Did your German course actually work? Prove it. Questions come straight from <b>your</b> course: its ${VOCAB.length} words and ${QUIZ.length} grammar questions.</p>
+  <div class="card"><h2>🎓 Final Exam (recommended)</h2>
+  <p class="muted">20 questions across all levels. Score ≥90% = the course worked. Breakdown shows weak levels.</p>
+  <button onclick="startExam()">Start Final Exam</button></div>
+  <div class="card"><h2>⏱️ 60-Second Blitz</h2>
+  <p class="muted">How many can you smash in a minute? 3 lives — wrong answers cost one. Best: <b>${best('blitz')}</b></p>
+  <div class="row"><button onclick="startBlitz('basic')">Basic</button><button onclick="startBlitz('intermediate')">Mid</button><button onclick="startBlitz('advanced')">Adv</button></div></div>
+  <div class="card"><h2>📝 Der / Die / Das Drill</h2>
+  <p class="muted">12 nouns, pick the article. The classic killer. Best: <b>${best('art')}/12</b></p>
+  <button onclick="startArticles()">Start Drill</button></div>`;
+}
+function mkQ(){
+  // build one mixed question: vocab DE->EN, EN->DE, article, or grammar
+  const r = Math.random();
+  if(r < 0.30){ // grammar from course quiz
+    const g = QUIZ[Math.floor(Math.random()*QUIZ.length)];
+    return {t:'gram', lvl:g.lvl, q:g.q, opts:shuffle(g.opts.map(o=>({t:o,ok:o===g.opts[g.a]}))), why:g.why};
+  }
+  const v = VOCAB[Math.floor(Math.random()*VOCAB.length)];
+  const m = v[0].match(/^(der|die|das)\s+(.+)$/);
+  if(m && r < 0.45){ // article drill
+    return {t:'art', lvl:v[2], q:'___ '+m[2], de:v[0],
+      opts:shuffle(['der','die','das'].map(a=>({t:a,ok:a===m[1]}))), why:v[0]+' = '+v[1]};
+  }
+  if(r < 0.72){ // DE -> EN
+    const others = shuffle(VOCAB.filter(x=>x[1]!==v[1])).slice(0,3).map(x=>x[1]);
+    speak(v[0]);
+    return {t:'vocab', lvl:v[2], q:'“'+v[0]+'” means…?', de:v[0],
+      opts:shuffle([{t:v[1],ok:true},...others.map(o=>({t:o,ok:false}))]), why:v[0]+' = '+v[1]};
+  }
+  // EN -> DE
+  const others = shuffle(VOCAB.filter(x=>x[0]!==v[0])).slice(0,3).map(x=>x[0]);
+  return {t:'vocab', lvl:v[2], q:'How do you say “'+v[1]+'”?', de:v[0],
+    opts:shuffle([{t:v[0],ok:true},...others.map(o=>({t:o,ok:false}))]), why:v[0]+' = '+v[1]};
+}
+function startExam(){ S.mode='exam'; S.qi=0; S.score=0; S.perLvl={}; nextQ(); }
+function startBlitz(lvl){ S.mode='blitz'; S.lvl=lvl; S.qi=0; S.score=0; S.lives=3; S.time=60; S.perLvl={}; tick(); nextQ(); }
+function startArticles(){
+  const nouns = shuffle(VOCAB.map(v=>v[0]).filter(w=>/^(der|die|das)\s/.test(w))).slice(0,12);
+  S.mode='art'; S.pool=nouns; S.qi=0; S.score=0; S.perLvl={}; nextArt();
+}
+function nextArt(){
+  if(S.qi>=S.pool.length) return finish();
+  const w = S.pool[S.qi], m = w.match(/^(der|die|das)\s+(.+)$/);
+  app.innerHTML = `<div class="card"><div class="score">Article ${S.qi+1}/${S.pool.length} · Score ${S.score}</div>
+  <div class="de">___ ${m[2]}</div>
+  ${['der','die','das'].map(a=>`<button class="opt" onclick="ansArt('${a}','${m[1]}',this)">${a}</button>`).join('')}
+  <p class="muted">🔊 ${w}</p></div>`;
+  speak(w);
+}
+function ansArt(pick, real, btn){
+  const ok = pick===real;
+  btn.classList.add(ok?'correct':'wrong');
+  if(ok) S.score++;
+  setTimeout(()=>{S.qi++;nextArt();}, 650);
+}
+function tick(){
+  clearInterval(S.timer);
+  S.timer = setInterval(()=>{
+    S.time--;
+    const t = document.querySelector('.timer');
+    if(t) t.textContent = '⏱ '+S.time+'s · ❤'.repeat(0)+' lives: '+S.lives;
+    if(S.time<=0){ finish(); }
+  },1000);
+}
+function nextQ(){
+  if(S.mode==='exam' && S.qi>=20) return finish();
+  if(S.mode==='blitz' && S.lives<=0) return finish();
+  const q = mkQ();
+  S.cur = q;
+  const head = S.mode==='exam'
+    ? `Question ${S.qi+1}/20 · Score ${S.score}`
+    : `<span class="timer">⏱ ${S.time}s</span> · Lives ${'❤'.repeat(S.lives)} · Score ${S.score}`;
+  const tag = {basic:'A1–A2',intermediate:'B1–B2',advanced:'C1–C2'}[q.lvl]||'';
+  app.innerHTML = `<div class="card"><div class="score">${head} <span class="pill">${tag}</span> <span class="pill">${q.t}</span></div>
+  <div class="de">${q.q}</div>
+  ${q.opts.map((o,i)=>`<button class="opt" onclick="answer(${i})">${o.t}</button>`).join('')}
+  <div id="fb"></div></div>`;
+}
+function answer(i){
+  const q = S.cur, o = q.opts[i];
+  const btns = document.querySelectorAll('.opt');
+  btns.forEach((b,j)=>{ if(q.opts[j].ok) b.classList.add('correct'); });
+  if(!o.ok && btns[i]) btns[i].classList.add('wrong');
+  document.getElementById('fb').innerHTML = `<p class="muted">${o.ok?'✅':'❌'} ${q.why||''}</p>
+  <button onclick="nextAfter()">Next →</button>`;
+  Array.from(document.querySelectorAll('.opt')).forEach(b=>b.onclick=null);
+  S.pending = o.ok;
+}
+function nextAfter(){
+  const ok = S.pending;
+  S.perLvl[S.cur.lvl] = S.perLvl[S.cur.lvl]||{n:0,ok:0};
+  S.perLvl[S.cur.lvl].n++; if(ok) S.perLvl[S.cur.lvl].ok++;
+  if(ok) S.score++; else if(S.mode==='blitz'){ S.lives--; if(S.lives<=0) return finish(); }
+  S.qi++; nextQ();
+}
+function finish(){
+  clearInterval(S.timer);
+  let verdict='', extra='';
+  if(S.mode==='exam'){
+    const pct = Math.round(S.score/20*100);
+    saveBest('exam', pct);
+    verdict = pct>=90 ? '🏆 The course WORKED. You are fluent-ready — C territory.'
+      : pct>=70 ? '💪 Solid! The course worked, polish weak spots below.'
+      : pct>=50 ? '📖 Halfway — the course is working, keep going.'
+      : '🌱 Early days — replay the lessons, then retry.';
+    const rows = Object.entries(S.perLvl).map(([l,s])=>{
+      const p = Math.round(s.ok/s.n*100);
+      return `<div>${l}: ${s.ok}/${s.n} (${p}%) ${p<70?'⬅️ restudy this level':''}</div>`; }).join('');
+    extra = `<div class="bar"><i style="width:${pct}%"></i></div><p class="big">${S.score}/20 (${pct}%)</p><p>${verdict}</p><div>${rows}</div>`;
+  } else if(S.mode==='blitz'){
+    saveBest('blitz', S.score);
+    extra = `<p class="big">${S.score} correct</p><p>${S.score>=15?'⚡ Lightning! Course fully absorbed.':S.score>=8?'🔥 Good pace — the words stick.':'🐢 Slow burn — more flashcards, then retry.'}</p><p class="muted">Best: ${best('blitz')}</p>`;
+  } else {
+    saveBest('art', S.score);
+    extra = `<p class="big">${S.score}/12</p><p>${S.score>=10?'🎯 Artikel-Meister!':S.score>=7?'👍 Decent — der/die/das needs reps.':'📚 Drill the gender lesson again.'}</p>`;
+  }
+  app.innerHTML = `<div class="card"><h2>Result</h2>${extra}<button onclick="home()">Play again</button></div>`;
+}
+home();
+</script></body></html>
